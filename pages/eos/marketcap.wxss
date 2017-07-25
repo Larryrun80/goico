@@ -1,0 +1,89 @@
+/* pages/eos/marketcap.wxss */
+@import "../template/coin-items/coin-items.wxss";
+
+.sortfilter {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #f1f1f1;
+  height: 80rpx;
+}
+
+.split-line {
+  width: 2rpx;
+  height: 50rpx;
+  background: #e5e5e5;
+  margin: auto;
+  margin-right: 10rpx;
+}
+
+.sort-container {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+}
+
+.rate-sort-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.sort-label {
+  margin: 0 5rpx 0 30rpx;
+  font-size: 26rpx;
+  color: #000;
+  line-height: 80rpx;
+}
+
+.sort-img-view {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 25rpx;
+}
+
+#sort-img {
+  width: 16rpx;
+  height: 25rpx;
+}
+
+.search {
+  background-color: #f2f2f2;
+  height: 80rpx;
+  width: 70%;
+  display: flex;
+  flex-direction: row;
+}
+
+.search-img {
+  margin: auto 0 auto 30rpx;
+}
+
+.search input {
+  height: 100%;
+  width: 100%;
+  margin-left: 20px;
+  font-size: 28rpx;
+}
+
+.search button {
+  height: 100%;
+  margin: auto 10rpx auto 10rpx;
+  border-width: 0;
+}
+
+.placeholder {
+  font-size: 30rpx;
+  color: #d1d1d1;
+  margin-left: 20rpx;
+}
+
+.search-input {
+  font-size: 30rpx;
+}
+
+.xx-img{
+    height: 30rpx;
+    width: 30rpx;
+    margin: auto;
+}

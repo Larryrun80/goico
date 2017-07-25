@@ -1,0 +1,10 @@
+<!--pages/me/index.wxml-->
+<view class="container">
+    <view class="user-info">
+        <image class="user-avatar" src="{{userInfo.avatarUrl}}"></image>
+        <text class="username">{{userInfo.nickName}}</text>
+    </view>
+    <view class="message">
+        <text>{{showMessage}}</text>
+    </view>
+</view>

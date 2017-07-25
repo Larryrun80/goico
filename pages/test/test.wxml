@@ -1,0 +1,5 @@
+<!--pages/test/test.wxml-->
+<view class="container">
+    <canvas canvas-id="lineCanvas" disable-scroll="true" class="canvas"></canvas>
+    <button class="update-btn" type="primary" bindtap="updateData">更新数据</button>
+</view>

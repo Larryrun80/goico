@@ -1,0 +1,31 @@
+<!--pages/eos/marketcap.wxml-->
+<import src="../template/coin-items/coin-items.wxml" />
+<form>
+  <view class="sortfilter">
+    <view class="search">
+        <icon type="search" class="search-img" size="15" color="#405f80"></icon>
+        <input value="{{keyword}}" class="search-input" type="text" confirm-type="done" placeholder="输入币名" placeholder-class="placeholder" bindfocus="onBindFocus" bindinput="onBindInput"/>
+        <button wx:if="{{searchPanelShow}}" plain="true" formType="reset" bindtap="onCancelImgTap"><image src="/images/close_btn.png" class="xx-img" ></image></button>
+    </view>
+    <view class="sort">
+      <view class="sort-container">
+        <view class="split-line"></view>
+        <view bindtap="sortByRank">
+          <label class="sort-label" style="color: {{rankSortColor}}">市值</label>
+        </view>
+        <view class="rate-sort-container" bindtap="sortByRate">
+          <label class="sort-label" style="color: {{rateSortColor}}">涨幅</label>
+          <view class="sort-img-view">
+            <image wx:if="{{ sort != 'rate_asc' && sort != 'rate_desc' }}" id="sort-img" src="/images/arrow_default.png"></image>
+            <image wx:else id="sort-img" src="/images/arrow_{{sort}}.png"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</form>
+<view class="cap-view">
+  <block wx:for="{{filteredCoins}}" wx:for-item="coin" wx:key="item">
+    <template is="coinItems" data="{{...coin}}"></template>
+  </block>
+</view>

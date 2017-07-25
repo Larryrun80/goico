@@ -1,0 +1,24 @@
+/* pages/me/index.wxss */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  margin: 10rpx;
+  border-radius: 50%;
+}
+
+.username {
+  color: #aaa;
+}
+
+.message {
+  text-align: center;
+  color: #aaa;
+  font-style: italic;
+  margin: 100px 50rpx 0;
+}

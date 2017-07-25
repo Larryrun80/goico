@@ -1,0 +1,69 @@
+<!--pages/eos/mcdetail.wxml-->
+<view class="mcd-container">
+  <view class="top-area">
+    <view class="currency">
+      <view class="name">{{name}}</view>
+    </view>
+    
+    <view class="price">
+      <view class="price-cny">¥{{price}}</view>
+      <view class="list-right">
+        <view wx:if="{{trends>=0}}" class="item-trend-increase">+{{trends}}% (24h)</view>
+        <view wx:if="{{trends<0}}" class="item-trend-decrease">{{trends}}% (24h)</view>
+      </view>
+    </view>
+  </view>
+  <view class="item-line"></view>
+  <view class="cmc-area">
+    <view class="list-item">
+      <view class="list-left">排名</view>
+      <view class="list-right">
+        <view>{{rank}}</view>
+        <view class="see-all" bindtap="seeAll">查看全部</view>
+      </view>
+    </view>
+  </view>
+  <view class="item-line"></view>
+  <view class="list-item">
+    <view class="list-left">市值</view>
+    <view class="list-right">${{marketCap}}</view>
+  </view>
+  <view class="item-line"></view>
+  <view class="list-item">
+    <view class="list-left">成交量</view>
+    <view class="list-right">${{volume24h}}</view>
+  </view>
+  <view class="item-line"></view>
+  <view class="list-item">
+    <view class="list-left">流通量</view>
+    <view class="list-right">{{availableSupply}} {{symbol}}</view>
+  </view>
+  <!-- <view class="item-line"></view>
+  <view class="list-item">
+    <view class="list-left">总量</view>
+    <view class="list-right">21,000,000,000 BTC</view>
+  </view> -->
+  <view class="sep-view">网站</view>
+  <view class="list-item">
+    <view class="list-left">Website</view>
+    <text class="url-right" data-url="{{links.website}}" bindtap="copyUrl">{{links.website}}</text>
+  </view>
+  <view class="item-line"></view>
+  <view class="list-item">
+    <view class="list-left">Explorer</view>
+    <text class="url-right" data-url="{{links.explorer}}" bindtap="copyUrl">{{links.explorer}}</text>
+  </view>
+  <view class="sep-view">交易市场</view>
+  <block wx:for="{{markets}}" wx:for-item="market" wx:key="market_id">
+    <view class="list-item">
+      <view class="list-left">{{market.name}}</view>
+      <text class="url-right" data-url='{{market.website}}' bindtap="copyUrl">{{market.website}}</text>
+    </view>
+    <view class="item-line"></view>
+  </block>
+  <view class="float-share">
+    <button id="share-btn" open-type="share" plain="true">
+      <image class="share-img" src="/images/share_btn.png"></image>
+    </button>
+  </view>
+</view>
