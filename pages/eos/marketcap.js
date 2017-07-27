@@ -86,7 +86,14 @@ Page({
     let symbolCnt = wx.getStorageSync('symbolCntIndex')
     if (scope == 'selected') {
       let selected = wx.getStorageSync('selectedSymbols')
-      let url_param = selected.join()
+      let selectedSymbols = []
+      for (let i in selected) {
+        if (selected[i].currency) {
+          selectedSymbols.push(selected[i].symbol)
+        }
+      }
+      console.log
+      let url_param = selectedSymbols.join()
       if (url_param) {
         url = url + '?symbol=' + url_param
       }
@@ -200,8 +207,8 @@ Page({
       symbolsToShow = []
       let selectedSymbols = wx.getStorageSync('selectedSymbols')
       for (let i in selectedSymbols) {
-        if (symbols[selectedSymbols[i]]) {
-          symbolsToShow.push(symbols[selectedSymbols[i]])
+        if (selectedSymbols[i].symbol && symbols[selectedSymbols[i].symbol]) {
+          symbolsToShow.push(symbols[selectedSymbols[i].symbol])
         }
       }
       settings.selectedScope = true

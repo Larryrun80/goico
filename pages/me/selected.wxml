@@ -12,7 +12,7 @@
       <view class="item-info">
         <view class="item-left" data-symbol="{{item.symbol}}" bindtap="redirectToDetail">{{item.currency}}</view>
         <view class="item-star" data-symbol="{{item.symbol}}" bindtap="selectSymbol">
-          <image class="star" wx:if="{{item.symbol_selected}}" src="/images/star.png"></image>
+          <image class="star" wx:if="{{item.symbolSelected}}" src="/images/star.png"></image>
           <image class="star" wx:else src="/images/unstar.png"></image>
         </view>
       </view>

@@ -75,7 +75,8 @@ Page({
           }
           that.setData({
             symbol: symbol,
-            name: res.data.data.name && res.data.data.symbol ? res.data.data.name + " (" + res.data.data.symbol + ")" : '--',
+            name: res.data.data.name,
+            currency: res.data.data.name && res.data.data.symbol ? res.data.data.name + " (" + res.data.data.symbol + ")" : '--',
             priceCNY: priceCNY,
             priceUSD: priceUSD,
             priceShow: priceShow,
@@ -112,14 +113,18 @@ Page({
 
     if (status) {
       for (let i in selected) {
-        if (selected[i] == symbol) {
+        if (selected[i].symbol == symbol) {
           selected.splice(i, 1)
+          break
         }
-        break
       }
     }
     else {
-      selected.push(symbol)
+      selected.push({
+        currency: this.data.currency,
+        name: this.data.name,
+        symbol: symbol,
+      })
     }
 
     wx.setStorageSync('selectedSymbols', selected)
@@ -130,8 +135,12 @@ Page({
 
   isSelected: function (symbol) {
     let selected = wx.getStorageSync('selectedSymbols')
-
-    if (selected && selected.includes(symbol)) {
+    let selectedSymbols = []
+    console.log(selected)
+    for (let i in selected) {
+      selectedSymbols.push(selected[i].symbol)
+    }
+    if (selectedSymbols && selectedSymbols.includes(symbol)) {
       return true
     }
     return false
@@ -142,8 +151,7 @@ Page({
    */
   onLoad: function (options) {
     console.log('options: ', options)
-    // if (!options.symbol) { this.seeAll(); return }
-    if (!options.symbol) { options.symbol = 'BTC' }
+    if (!options.symbol) { this.seeAll(); return }
     this.updateCurrency(options.symbol)
 
     wx.setNavigationBarTitle({
