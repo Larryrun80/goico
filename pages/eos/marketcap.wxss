@@ -74,12 +74,14 @@
   display: flex;
   flex-direction: row;  
   align-items: center;
+  margin-left: 15rpx;
 }
 
 .right-tool {
   width: 20%;
   display: flex;
   flex-direction: row;  
+  align-items: center;
 }
 
 .tool-label {
@@ -99,7 +101,7 @@
   width: 2rpx;
   height: 60rpx;
   background: #e5e5e5;
-  margin: auto;
+  margin-left: 30rpx;
 }
 
 .placeholder {
@@ -113,16 +115,19 @@
 } */
 
 #share-btn {
-  width: 140rpx;
+  width: 50rpx;
   height: 60rpx;
   border-width: 0;
-  align-items: center
+  align-items: center;
+  margin-right: 30rpx;
+  padding: 0;
 }
 
 .share-img {
   width: 48rpx;
   height: 48rpx;
   border: none;
+  margin: auto;
 }
 
 #cancel-btn {

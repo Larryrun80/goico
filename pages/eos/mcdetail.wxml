@@ -3,6 +3,10 @@
   <view class="top-area">
     <view class="currency">
       <view class="name">{{name}}</view>
+      <view class="item-star" data-symbol="{{symbol}}" bindtap="selectSymbol">
+        <image class="star" wx:if="{{symbolSelected}}" src="/images/star.png"></image>
+        <image class="star" wx:else src="/images/unstar.png"></image>
+      </view>
     </view>
     
     <view class="price">

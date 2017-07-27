@@ -91,6 +91,7 @@ Page({
             markets: res.data.data.markets ? res.data.data.markets : [],
             trendIncreaseCss: trendIncreaseCss,
             trendDecreaseCss: trendDecreaseCss,
+            symbolSelected: that.isSelected(symbol),
           }) 
         }
       },
@@ -104,12 +105,45 @@ Page({
     )
   },
 
+  selectSymbol: function () {
+    let status = this.data.symbolSelected
+    let symbol = this.data.symbol
+    let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
+
+    if (status) {
+      for (let i in selected) {
+        if (selected[i] == symbol) {
+          selected.splice(i, 1)
+        }
+        break
+      }
+    }
+    else {
+      selected.push(symbol)
+    }
+
+    wx.setStorageSync('selectedSymbols', selected)
+    this.setData({
+      symbolSelected: !status
+    })
+  },
+
+  isSelected: function (symbol) {
+    let selected = wx.getStorageSync('selectedSymbols')
+
+    if (selected && selected.includes(symbol)) {
+      return true
+    }
+    return false
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
     console.log('options: ', options)
-    if (!options.symbol) { this.seeAll(); return }
+    // if (!options.symbol) { this.seeAll(); return }
+    if (!options.symbol) { options.symbol = 'BTC' }
     this.updateCurrency(options.symbol)
 
     wx.setNavigationBarTitle({

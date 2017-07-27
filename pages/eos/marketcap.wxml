@@ -32,9 +32,9 @@
     </view>
     <view class="right-tool">
       <view class="veritcal-seperate"></view>
-      <button id="share-btn" open-type="share" plain="true">
+       <button id="share-btn" open-type="share" plain="true">
         <image class="share-img" src="/images/share_btn_small.png"></image>
-      </button>
+      </button> 
     </view>
   </view>
   <!-- <view class="sortfilter">

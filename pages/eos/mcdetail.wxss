@@ -21,7 +21,7 @@ page {
 .currency {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  align-items: center;
 }
 
 .name {
@@ -76,6 +76,11 @@ page {
   background: #E5E5E5;
   margin-left: 30rpx;
   margin-right: 30rpx;
+}
+
+.item-star {
+  margin-left: 10rpx;
+  margin-top: 5rpx;
 }
 
 .list-item {
@@ -160,4 +165,9 @@ page {
 
 .float-share {
   z-index: 10;
+}
+
+.star {
+  width: 64rpx;
+  height: 64rpx;
 }
