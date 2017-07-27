@@ -1,0 +1,8 @@
+<!--pages/me/wechat.wxml-->
+<view class="container">
+  <view class="wx-title">
+    加群请先加微信： 
+    <text selectable="true" >wx_mytoken</text>
+  </view>
+  <image id="qr-img" src="/images/wechat_qr.jpg"></image>
+</view>

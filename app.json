@@ -1,11 +1,14 @@
 {
   "pages":[
+    "pages/me/index",
     "pages/eos/marketcap",
     "pages/eos/index",
     "pages/eos/mcdetail",
-    "pages/me/index",
     "pages/test/test",
-    "pages/logs/logs"
+    "pages/logs/logs",
+    "pages/me/wechat",
+    "pages/me/about",
+    "pages/me/selected"
   ],
   "window":{
 
@@ -30,6 +33,12 @@
         "text": "EOS知道",
         "iconPath": "/images/eos_tab.png",
         "selectedIconPath": "/images/eos_tab_selected.png"
+      },
+      {
+        "pagePath": "pages/me/index",
+        "text": "我的",
+        "iconPath": "/images/me_tab.png",
+        "selectedIconPath": "/images/me_tab_selected.png"
       }]
   }
 }

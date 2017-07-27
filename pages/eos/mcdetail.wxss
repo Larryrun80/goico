@@ -47,7 +47,7 @@ page {
   margin-right: 15rpx;
 }
 
-.item-trend-increase {
+.item-trend-green {
   font-size: 32rpx;
   color: #1AAD19;
   padding-top: 20rpx;
@@ -59,7 +59,7 @@ page {
   border-radius: 6rpx;
 }
 
-.item-trend-decrease {
+.item-trend-red {
   font-size: 32rpx;
   color: #D0021B;
   padding-top: 20rpx;

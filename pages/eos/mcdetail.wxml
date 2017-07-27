@@ -6,10 +6,10 @@
     </view>
     
     <view class="price">
-      <view class="price-cny">¥{{price}}</view>
+      <view class="price-cny">{{priceShow}}</view>
       <view class="list-right">
-        <view wx:if="{{trends>=0}}" class="item-trend-increase">+{{trends}}% (24h)</view>
-        <view wx:if="{{trends<0}}" class="item-trend-decrease">{{trends}}% (24h)</view>
+        <view wx:if="{{trends>=0}}" class="{{trendIncreaseCss}}">+{{trends}}% (24h)</view>
+        <view wx:if="{{trends<0}}" class="{{trendDecreaseCss}}">{{trends}}% (24h)</view>
       </view>
     </view>
   </view>

@@ -53,15 +53,32 @@ Page({
 
   updateCurrency: function(symbol) {
     let that = this
+    let fiat = wx.getStorageSync('defaultFiatIndex')
+    let riseColor = wx.getStorageSync('riseColor')
+    let trendIncreaseCss = 'item-trend-green'
+    let trendDecreaseCss = 'item-trend-red'
+    if (riseColor && riseColor == 'red') {
+      trendIncreaseCss = 'item-trend-red'
+      trendDecreaseCss = 'item-trend-green'
+    }
+
     requests.request(
       settings.requestCurrencyUrl + '?symbol=' + symbol,
       function (res) {
         if (res.data.code == 0) {
-          console.log(res)
+          let priceCNY = res.data.data.market_cap.price_cny > 0.01 ? tools.friendlyNumber(res.data.data.market_cap.price_cny.toFixed(2)) : res.data.data.market_cap.price_cny
+          let priceUSD = res.data.data.market_cap.price_usd > 0.01 ? tools.friendlyNumber(res.data.data.market_cap.price_usd.toFixed(2)) : res.data.data.market_cap.price_usd
+          let priceShow = '¥' + priceCNY
+
+          if (fiat && fiat == 1) {
+            priceShow = '$' + priceUSD
+          }
           that.setData({
             symbol: symbol,
             name: res.data.data.name && res.data.data.symbol ? res.data.data.name + " (" + res.data.data.symbol + ")" : '--',
-            price: res.data.data.market_cap.price_cny > 0.01 ? tools.friendlyNumber(res.data.data.market_cap.price_cny.toFixed(2)) : res.data.data.market_cap.price_cny,
+            priceCNY: priceCNY,
+            priceUSD: priceUSD,
+            priceShow: priceShow,
             trends: res.data.data.market_cap.percent_change_24h ? tools.friendlyNumber(res.data.data.market_cap.percent_change_24h) : '0',
             rank: res.data.data.market_cap.rank ? res.data.data.market_cap.rank : '--',
             marketCap: res.data.data.market_cap.market_cap_usd ? tools.friendlyNumber(res.data.data.market_cap.market_cap_usd.toFixed(2)) : '--',
@@ -71,7 +88,9 @@ Page({
               'website': res.data.data.website ? res.data.data.website : '暂无',
               'explorer': res.data.data.explorer ? res.data.data.explorer : '暂无',
             } ,
-            markets: res.data.data.markets ? res.data.data.markets : []
+            markets: res.data.data.markets ? res.data.data.markets : [],
+            trendIncreaseCss: trendIncreaseCss,
+            trendDecreaseCss: trendDecreaseCss,
           }) 
         }
       },
@@ -89,7 +108,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log(options)
+    console.log('options: ', options)
     if (!options.symbol) { this.seeAll(); return }
     this.updateCurrency(options.symbol)
 
@@ -154,7 +173,6 @@ Page({
       // 来自页面内转发按钮
       console.log(res.target)
     }
-    console.log('/pages/eos/mcdetail?symbol=' + this.data.symbol)
     return {
       title: this.data.name,
       path: '/pages/eos/mcdetail?symbol=' + this.data.symbol,

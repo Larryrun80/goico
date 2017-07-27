@@ -1,4 +1,4 @@
-// pages/me/index.js
+var emoj = require('../../utils/emoj.js')
 var app = getApp()
 Page({
 
@@ -28,7 +28,7 @@ Page({
       '"人不一定要富有，但一定要独立"'
     ],
     showMessage: '',
-    userInfo: {}
+    userInfo: {},
   },
 
   getMessage: function () {
@@ -38,6 +38,115 @@ Page({
     this.setData({
       showMessage: this.data.messages[index]
     })
+  },
+
+  userLogin: function () {
+    wx.login({
+      success: function(res) {
+        if (res.code) {
+          wx.showModal({
+            title: 'code',
+            content: res.code,
+            confirmText: '拷贝',
+            success: function (result) {
+              if (result.confirm) {
+                wx.setClipboardData({
+                  data: res.code,
+                  success: function (res) {
+                  }
+                })
+              } else if (result.cancel) {
+                console.log('用户点击取消')
+              }
+            }
+          })
+        }
+        else {
+          console.log('获取用户登录态失败！' + res.errMsg)
+        }
+      }
+    })
+  },
+
+  underConstruction: function () {
+    wx.showToast({
+      title: '由于上线压力太大，此功能还未开发完成，请耐心等待',
+      duration: 1500
+    })
+  },
+
+  switchTrendColor: function (e) {
+    let color = 'green'
+    if (e.detail.value) {
+      color = 'red'
+    }
+
+    this.setData({
+      riseColor: color
+    })
+    wx.setStorage({
+      key: 'riseColor',
+      data: color,
+    })
+  },
+
+  setFiat: function (e) {
+    this.setData({
+      defaultFiatIndex: e.detail.value
+    })
+    wx.setStorage({
+      key: 'defaultFiatIndex',
+      data: e.detail.value,
+    })
+  },
+
+  setSymbolCnt: function (e) {
+    this.setData({
+      symbolCntIndex: e.detail.value
+    })
+    wx.setStorage({
+      key: 'symbolCntIndex',
+      data: e.detail.value,
+    })
+  },
+
+  goSelected: function (e) {
+    wx.navigateTo({
+      url: '/pages/me/selected',
+    })
+  },
+
+  addWechat: function (e) {
+    wx.navigateTo({
+      url: '/pages/me/wechat',
+    })
+  },
+
+  aboutUs: function (e) {
+    wx.navigateTo({
+      url: '/pages/me/about',
+    })
+  },
+
+  loadDefaultSettings: function () {
+    let settings = {
+      fiatList: ['人民币', '美元'],
+      defaultFiatIndex: 0,
+      symbolCnt: ['Top 200', 'Top 500'],
+      symbolCntIndex: 0,
+      currencyListCnt: 200,
+      riseColor: 'green',
+    }
+    let res = wx.getStorageInfoSync()
+
+    for (let item in settings) {
+      if ((res.keys.includes(item))) {
+        console.log('load value from storage ', item)
+        settings[item] = wx.getStorageSync(item)
+      }
+    }
+
+    return settings
   },
 
   /**
@@ -65,6 +174,8 @@ Page({
    */
   onShow: function () {
     this.getMessage()
+    let settings = this.loadDefaultSettings()
+    this.setData(settings)
   },
 
   /**

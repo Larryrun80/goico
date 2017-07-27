@@ -30,9 +30,9 @@
     <text class="eos-text" selectable="true">https://eos.io</text>
     <text class="eos-title">购买渠道</text>
     <image id="logs-img" src="/images/logos.png"></image>
-    <text class="eos-title" selectable="true">加群请先加微信: voicecho</text>
+    <!-- <text class="eos-title" selectable="true">加群请先加微信: voicecho</text>
     <!--<text class="eos-text" selectable="true">voicecho</text>-->
-    <image id="qr-img" src="/images/wechat_qr.jpg"></image>
+    <!-- <image id="qr-img" src="/images/wechat_qr.jpg"></image> -->
     <view class="placeholder"></view>
   </view>
   <view class="float-share">

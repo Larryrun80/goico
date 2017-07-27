@@ -50,7 +50,7 @@
   color: #000;
 }
 
-.item-trend-increase {
+.item-trend-green {
   font-size: 26rpx;
   color: #FFF;
   background: #1AAD19;
@@ -62,7 +62,7 @@
   margin-left: 20rpx;
 }
 
-.item-trend-decrease {
+.item-trend-red {
   font-size: 26rpx;
   color: #FFF;
   background: #D0021B;

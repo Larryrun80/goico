@@ -4,31 +4,34 @@ var requests = require('../../utils/requests.js')
 var settings = require('../../secret/settings.js')
 
 Page({
-
   /**
    * 页面的初始数据
    */
   data: {
-    containerShow: true,
+    // containerShow: true,
     searchPanelShow: false,
     keyword: '',
-    coins: [],
-    filteredCoins: [],
+    symbols: [],
+    symbolsToShow: [],
     sort: "rank",
+    scope: "top200",
     rateSortColor: "#999",
     rankSortColor: "#000",
+    topScopeColor: "#000",
+    selectedScopeColor: "#999",
+    riseRed: false,
   },
 
   onBindFocus: function (e) {
     this.setData({
-      containerShow: false,
+      // containerShow: false,
       searchPanelShow: true,
     })
   },
 
   onBindInput: function (event) {
     let keyword = event.detail.value;
-    this.flushData(keyword, this.data.sort)
+    this.flushData(this.data.scope, keyword, this.data.sort)
   },
 
   onBindBlur: function (event) {
@@ -39,55 +42,84 @@ Page({
 
   onCancelImgTap: function (event) {
     let keyword = ''
-    this.flushData(keyword, this.data.sort)
+    this.flushData(this.data.scope, keyword, this.data.sort)
     this.setData({
-      containerShow: true,
+      // containerShow: true,
       searchPanelShow: false,      
     })
   },
 
   redirectToDetail: function (res) {
     let name = res.currentTarget.dataset.name
-    let coin = res.currentTarget.dataset.coin
+    let symbol = res.currentTarget.dataset.symbol
     wx.navigateTo({
-      url: 'mcdetail?symbol=' + coin
+      url: 'mcdetail?symbol=' + symbol
     })
   },
 
-  getfilterCoins: function (keyword, coinList) {
-    var filteredCoins = []
+  getSymbolsToShow: function (keyword, symbolList) {
+    var symbolsToShow = []
 
-    for (var i in coinList){
-      if (coinList[i].coin.toUpperCase().indexOf(keyword.toUpperCase())>=0 || coinList[i].name.toUpperCase().indexOf(keyword.toUpperCase())>=0) {
-        filteredCoins.push(coinList[i])
+    for (var i in symbolList){
+      if (symbolList[i].symbol.toUpperCase().indexOf(keyword.toUpperCase())>=0 || symbolList[i].name.toUpperCase().indexOf(keyword.toUpperCase())>=0) {
+        symbolsToShow.push(symbolList[i])
       }
     }
 
-    return filteredCoins
+    return symbolsToShow
   },
 
-  updateMarketcap: function (keyword, sort) {
+  updateMarketcap: function (scope, keyword, sort) {
     let that = this
+    let fiat = wx.getStorageSync('defaultFiatIndex')
+
+    // rise color
+    let riseColor = wx.getStorageSync('riseColor')
+    let trendIncreaseCss = 'item-trend-green'
+    let trendDecreaseCss = 'item-trend-red'
+    if (riseColor && riseColor == 'red') {
+      trendIncreaseCss = 'item-trend-red'
+      trendDecreaseCss = 'item-trend-green'
+    }
+
+    // top 200 or top 500
+    let url = settings.requestMarketListUrl
+    let symbolCnt = wx.getStorageSync('symbolCntIndex')
+    let url_param = 'limit=200'
+    if (symbolCnt && symbolCnt == 1) {
+      url_param = 'limit=500'
+    }
+    url = url + '?' + url_param
+
     requests.request(
-      settings.requestMarketcapUrl,
+      url,
       function (res) {
         if (res.data.code == 0) {
           // console.log(res)
           let mcList = []
           let mcListRaw = res.data.data.list
           for (let i in mcListRaw) {
+            let priceCNY = mcListRaw[i].price_cny >= 0.01 ? tools.friendlyNumber(mcListRaw[i].price_cny.toFixed(2)) : mcListRaw[i].price_cny
+            let priceUSD = mcListRaw[i].price_usd >= 0.01 ? tools.friendlyNumber(mcListRaw[i].price_usd.toFixed(2)) : mcListRaw[i].price_usd
+            let priceShow = '¥' + priceCNY
+            
+            if (fiat && fiat == 1) {
+              priceShow = '$' + priceUSD
+            }
             mcList.push({
               name: mcListRaw[i].name,
-              coin: mcListRaw[i].symbol,
+              symbol: mcListRaw[i].symbol,
               rank: mcListRaw[i].rank,
-              priceCNY: mcListRaw[i].price_cny >= 0.01 ? tools.friendlyNumber(mcListRaw[i].price_cny.toFixed(2)) : mcListRaw[i].price_cny,
+              priceShow: priceShow,
+              priceCNY: priceCNY,
               priceUSD: mcListRaw[i].price_usd,
               marketcap: tools.friendlyNumber(mcListRaw[i].market_cap_usd),
-              percentChange: mcListRaw[i].percent_change_24h ? mcListRaw[i].percent_change_24h : ((Math.random() - 0.5) * 100).toFixed(2)
+              percentChange: mcListRaw[i].percent_change_24h ? mcListRaw[i].percent_change_24h : ((Math.random() - 0.5) * 100).toFixed(2),
+              trendIncreaseCss: trendIncreaseCss,
+              trendDecreaseCss: trendDecreaseCss,
             })
           }
-
-          that.flushData(keyword, sort, mcList)
+          that.flushData(scope, keyword, sort, mcList)
         }
       },
       function (res) {
@@ -102,62 +134,82 @@ Page({
 
   // keyword, 搜索关键词
   // sort 排序模式： rank, rate_asc, rate_desc
-  // originData, 如果不传入值则取本地coins数据, 这个值也会被setData为coins
-  flushData: function (keyword='', sort='rank', originData=this.data.coins) {
+  // originData, 如果不传入值则取本地symbols数据, 这个值也会被setData为symbols
+  flushData: function (scope = 'top', keyword='', sort='rank', originData=this.data.symbols) {
     let settings = {}
     const selectedColor = "#000"
     const unselectedColor = "#999"
-
     if (!sort in ['rank', "rate_asc", "rate_desc"]) {
+      return null
+    }
+  
+    if (!scope in ['top', "selected"]) {
       return null
     }
 
     // get filtered result
     settings.keyword = keyword
-    let filteredCoins = this.getfilterCoins(keyword, originData)
+    let symbolsToShow = this.getSymbolsToShow(keyword, originData)
 
     // sort
     if (sort === 'rank') {
       settings.rateSortColor = unselectedColor
       settings.rankSortColor = selectedColor
       settings.sort = 'rank'
-      filteredCoins = filteredCoins.sort(tools.by("rank"))
+      symbolsToShow = symbolsToShow.sort(tools.by("rank"))
     }
     if (sort == "rate_asc") {
       settings.rateSortColor = selectedColor
       settings.rankSortColor = unselectedColor
       settings.sort = 'rate_asc'
-      filteredCoins = filteredCoins.sort(tools.by("percentChange", "asc"))
+      symbolsToShow = symbolsToShow.sort(tools.by("percentChange", "asc"))
     }
     if (sort == "rate_desc") {
       settings.rateSortColor = selectedColor
       settings.rankSortColor = unselectedColor
       settings.sort = 'rate_desc'
-      filteredCoins = filteredCoins.sort(tools.by("percentChange", "desc"))
+      symbolsToShow = symbolsToShow.sort(tools.by("percentChange", "desc"))
     }
 
-    settings.coins = originData
-    settings.filteredCoins = filteredCoins
+    // scope
+    if (scope == "top") {
+      settings.topScopeColor = selectedColor
+      settings.selectedScopeColor = unselectedColor
+      settings.scope = 'top'
+    }
+    if (scope == "selected") {
+      settings.topScopeColor = unselectedColor
+      settings.selectedScopeColor = selectedColor
+      settings.scope = 'selected'
+    }
 
+    settings.symbols = originData
+    settings.symbolsToShow = symbolsToShow
     this.setData(
       settings
     )
   },
 
-  loadSettings: function () {
-    this.setData({
-      requestMarketcapUrl: settings.requestMarketcapUrl
-    })
-  },
-
   sortByRate: function () {
     let sort = this.data.sort == "rate_desc" ? "rate_asc" : "rate_desc"
-    this.flushData(this.data.keyword, sort)
+    this.flushData(this.data.scope, this.data.keyword, sort)
   },
 
   sortByRank: function () {
     if (!(this.data.sort == 'rank')) {
-      this.flushData(this.data.keyword, "rank")
+      this.flushData(this.data.scope, this.data.keyword, "rank")
+    }
+  },
+
+  bindTopScope: function () {
+    if (!(this.data.scope == 'top')) {
+      this.updateMarketcap('top', this.data.keyword, this.data.sort)
+    }
+  },
+
+  bindSelectedScope: function () {
+    if (!(this.data.scope == 'selected')) {
+      this.updateMarketcap('selected', this.data.keyword, this.data.sort)
     }
   },
 
@@ -168,7 +220,7 @@ Page({
     let keyword = options.filter ? options.filter : ''
     let sort = options.sort ? options.sort : 'rank'
 
-    this.updateMarketcap(keyword, sort)
+    this.updateMarketcap('top', keyword, sort)
   
     wx.showShareMenu({
       withShareTicket: true
@@ -207,7 +259,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    this.updateMarketcap(this.data.keyword, this.data.sort)
+    this.updateMarketcap(this.data.scope, this.data.keyword, this.data.sort)
     wx.stopPullDownRefresh()
   },
 

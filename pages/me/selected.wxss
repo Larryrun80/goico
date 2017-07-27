@@ -1,0 +1,89 @@
+/* pages/me/selected.wxss */
+.container {
+  display: flex;
+  flex-direction: column
+}
+
+.filter {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #f1f1f1;
+  width: 100%;
+  height: 80rpx;
+}
+
+#cancel-btn {
+  width: 60rpx;
+  height: 80rpx;
+  border-width: 0;
+  align-items: center;
+  margin-right: 20rpx;
+}
+
+.xx-img{
+    height: 30rpx;
+    width: 30rpx;
+    margin: auto;
+}
+
+.search-img {
+  margin-left: 30rpx;
+}
+
+.search-input {
+  width: 100%;
+  margin-left: 20rpx;
+  color: #000;
+  font-size: 28rpx;
+}
+
+.placeholder {
+  font-size: 28rpx;
+  color: #d1d1d1;
+}
+
+.item-line {
+  height: 1rpx;
+  margin: 0 30rpx;
+  background: #E5E5E5;
+}
+
+.currencies {
+  display: flex;
+  flex-direction: column;
+}
+
+.currencies-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100rpx;
+  margin: 0 30rpx;
+}
+
+.item-left {
+  font-size: 32rpx;
+  color: #000;
+  line-height: 100rpx;
+  width: 80%;
+}
+
+.item-star {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100rpx;
+  width: 64rpx;
+  margin-right: 0;
+}
+
+.star {
+  width: 64rpx;
+  height: 64rpx;
+}

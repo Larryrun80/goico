@@ -2,9 +2,11 @@
 App({
   onLaunch: function() {
     //调用API从本地缓存中获取数据
-    var logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
+    // var logs = wx.getStorageSync('logs') || []
+    // logs.unshift(Date.now())
+    // wx.setStorageSync('logs', logs)
+
+    this.initData()
   },
 
   getUserInfo: function(cb) {
@@ -25,5 +27,34 @@ App({
 
   globalData: {
     userInfo: null
+  },
+
+  initData: function () {
+    wx.getStorageInfo({
+      success: function (res) {
+        console.log('已使用空间: ', res.currentSize)
+        console.log('全部空间: ', res.limitSize)
+
+        let initData = {
+          fiatList: ['人民币', '美元'],
+          defaultFiatIndex: 0,
+          symbolCnt: ['Top 200', 'Top 500'],
+          symbolCntIndex: 0,
+          currencyListCnt: 200,
+          riseColor: 'green',
+          selectedSymbols: [],
+        }
+
+        for (let item in initData) {
+          if (!(res.keys.includes(item))) {
+            console.log('init ', item)
+            wx.setStorage({
+              key: item,
+              data: initData[item],
+            })
+          }
+        }
+      }
+    })
   }
 })
