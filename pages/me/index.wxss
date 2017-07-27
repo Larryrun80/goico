@@ -16,6 +16,7 @@ page {
   background-size: 100% 100%;
   background-repeat: no-repeat; 
   height: 272rpx;
+  background-color: #000;
 }
 
 .user-avatar {

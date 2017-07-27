@@ -1,7 +1,7 @@
 {
   "pages":[
-    "pages/me/index",
     "pages/eos/marketcap",
+    "pages/me/index",
     "pages/eos/index",
     "pages/eos/mcdetail",
     "pages/test/test",

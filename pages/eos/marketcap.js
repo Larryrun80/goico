@@ -14,10 +14,9 @@ Page({
     symbols: [],
     symbolsToShow: [],
     sort: "rank",
-    scope: "top200",
+    selectedScope: false, // 当前是否是自选
     rateSortColor: "#999",
     rankSortColor: "#000",
-    topScopeColor: "#000",
     selectedScopeColor: "#999",
     riseRed: false,
   },
@@ -31,7 +30,8 @@ Page({
 
   onBindInput: function (event) {
     let keyword = event.detail.value;
-    this.flushData(this.data.scope, keyword, this.data.sort)
+    let scope = this.data.selectedScope ? 'selected' : 'top'
+    this.flushData(scope, keyword, this.data.sort)
   },
 
   onBindBlur: function (event) {
@@ -42,7 +42,8 @@ Page({
 
   onCancelImgTap: function (event) {
     let keyword = ''
-    this.flushData(this.data.scope, keyword, this.data.sort)
+    let scope = this.data.selectedScope ? 'selected' : 'top'
+    this.flushData(scope, keyword, this.data.sort)
     this.setData({
       // containerShow: true,
       searchPanelShow: false,      
@@ -59,13 +60,11 @@ Page({
 
   getSymbolsToShow: function (keyword, symbolList) {
     var symbolsToShow = []
-
     for (var i in symbolList){
       if (symbolList[i].symbol.toUpperCase().indexOf(keyword.toUpperCase())>=0 || symbolList[i].name.toUpperCase().indexOf(keyword.toUpperCase())>=0) {
         symbolsToShow.push(symbolList[i])
       }
     }
-
     return symbolsToShow
   },
 
@@ -85,12 +84,27 @@ Page({
     // top 200 or top 500
     let url = settings.requestMarketListUrl
     let symbolCnt = wx.getStorageSync('symbolCntIndex')
-    let url_param = 'limit=200'
-    if (symbolCnt && symbolCnt == 1) {
-      url_param = 'limit=500'
+    if (scope == 'selected') {
+      let selected = wx.getStorageSync('selectedSymbols')
+      let url_param = selected.join()
+      if (url_param) {
+        url = url + '?symbol=' + url_param
+      }
+      else {
+        wx.showToast({
+          title: '当前没有自选货币，请先到币详情或设置页面添加',
+          duration: 2000,
+        })
+        return
+      }
     }
-    url = url + '?' + url_param
-
+    else {
+      let url_param = 'limit=200'
+      if (symbolCnt && symbolCnt == 1) {
+        url_param = 'limit=500'
+      }
+      url = url + '?' + url_param
+    }
     requests.request(
       url,
       function (res) {
@@ -137,6 +151,7 @@ Page({
   // originData, 如果不传入值则取本地symbols数据, 这个值也会被setData为symbols
   flushData: function (scope = 'top', keyword='', sort='rank', originData=this.data.symbols) {
     let settings = {}
+
     const selectedColor = "#000"
     const unselectedColor = "#999"
     if (!sort in ['rank', "rate_asc", "rate_desc"]) {
@@ -151,37 +166,62 @@ Page({
     settings.keyword = keyword
     let symbolsToShow = this.getSymbolsToShow(keyword, originData)
 
-    // sort
-    if (sort === 'rank') {
+    if (scope == 'top') {
+      // sort
+      if (sort === 'rank') {
+        settings.rateSortColor = unselectedColor
+        settings.rankSortColor = selectedColor
+        settings.selectedScopeColor = unselectedColor
+        settings.sort = 'rank'
+        symbolsToShow = symbolsToShow.sort(tools.by("rank"))
+      }
+      if (sort == "rate_asc") {
+        settings.rateSortColor = selectedColor
+        settings.rankSortColor = unselectedColor
+        settings.selectedScopeColor = unselectedColor
+        settings.sort = 'rate_asc'
+        symbolsToShow = symbolsToShow.sort(tools.by("percentChange", "asc"))
+      }
+      if (sort == "rate_desc") {
+        settings.rateSortColor = selectedColor
+        settings.rankSortColor = unselectedColor
+        settings.selectedScopeColor = unselectedColor
+        settings.sort = 'rate_desc'
+        symbolsToShow = symbolsToShow.sort(tools.by("percentChange", "desc"))
+      }
+      settings.selectedScope = false
+    }
+    else {  // if selected Symbols
+      let symbols = {}
+      for (let i in symbolsToShow) {
+        symbols[symbolsToShow[i].symbol] = symbolsToShow[i]
+      }
+
+      symbolsToShow = []
+      let selectedSymbols = wx.getStorageSync('selectedSymbols')
+      for (let i in selectedSymbols) {
+        if (symbols[selectedSymbols[i]]) {
+          symbolsToShow.push(symbols[selectedSymbols[i]])
+        }
+      }
+      settings.selectedScope = true
+      settings.sort = ''
       settings.rateSortColor = unselectedColor
-      settings.rankSortColor = selectedColor
-      settings.sort = 'rank'
-      symbolsToShow = symbolsToShow.sort(tools.by("rank"))
-    }
-    if (sort == "rate_asc") {
-      settings.rateSortColor = selectedColor
       settings.rankSortColor = unselectedColor
-      settings.sort = 'rate_asc'
-      symbolsToShow = symbolsToShow.sort(tools.by("percentChange", "asc"))
-    }
-    if (sort == "rate_desc") {
-      settings.rateSortColor = selectedColor
-      settings.rankSortColor = unselectedColor
-      settings.sort = 'rate_desc'
-      symbolsToShow = symbolsToShow.sort(tools.by("percentChange", "desc"))
+      settings.selectedScopeColor = selectedColor
     }
 
     // scope
-    if (scope == "top") {
-      settings.topScopeColor = selectedColor
-      settings.selectedScopeColor = unselectedColor
-      settings.scope = 'top'
-    }
-    if (scope == "selected") {
-      settings.topScopeColor = unselectedColor
-      settings.selectedScopeColor = selectedColor
-      settings.scope = 'selected'
-    }
+    // if (scope == "top") {
+    //   settings.topScopeColor = selectedColor
+    //   settings.selectedScopeColor = unselectedColor
+    //   settings.scope = 'top'
+    // }
+    // if (scope == "selected") {
+    //   settings.topScopeColor = unselectedColor
+    //   settings.selectedScopeColor = selectedColor
+    //   settings.scope = 'selected'
+    // }
 
     settings.symbols = originData
     settings.symbolsToShow = symbolsToShow
@@ -192,23 +232,33 @@ Page({
 
   sortByRate: function () {
     let sort = this.data.sort == "rate_desc" ? "rate_asc" : "rate_desc"
-    this.flushData(this.data.scope, this.data.keyword, sort)
+    if (this.data.selectedScope) {
+      this.updateMarketcap('top', this.data.keyword, sort)
+    }
+    else {
+      this.flushData('top', this.data.keyword, sort)
+    }
   },
 
   sortByRank: function () {
     if (!(this.data.sort == 'rank')) {
-      this.flushData(this.data.scope, this.data.keyword, "rank")
+      if (this.data.selectedScope) {
+        this.updateMarketcap('top', this.data.keyword, 'rank')
+      }
+      else {
+        this.flushData('top', this.data.keyword, "rank")
+      }
     }
   },
 
-  bindTopScope: function () {
-    if (!(this.data.scope == 'top')) {
-      this.updateMarketcap('top', this.data.keyword, this.data.sort)
-    }
-  },
+  // bindTopScope: function () {
+  //   if (!(this.data.scope == 'top')) {
+  //     this.updateMarketcap('top', this.data.keyword, this.data.sort)
+  //   }
+  // },
 
   bindSelectedScope: function () {
-    if (!(this.data.scope == 'selected')) {
+    if (!this.data.selectedScope) {
       this.updateMarketcap('selected', this.data.keyword, this.data.sort)
     }
   },
@@ -259,7 +309,8 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    this.updateMarketcap(this.data.scope, this.data.keyword, this.data.sort)
+    let scope = this.data.selectedScope ? 'selected' : 'top'
+    this.updateMarketcap(scope, this.data.keyword, this.data.sort)
     wx.stopPullDownRefresh()
   },
 

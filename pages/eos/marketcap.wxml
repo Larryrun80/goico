@@ -7,9 +7,9 @@
         <icon type="search" class="search-img" size="15" color="#405f80"></icon>
       </view>
       <view class='switch-line' wx:if="{{!searchPanelShow}}">
-        <view bindtap="bindTopScope">
+        <!-- <view bindtap="bindTopScope">
           <label class="tool-label" style="color: {{topScopeColor}}">Top 200</label>
-        </view>
+        </view> -->
         <view bindtap="bindSelectedScope">
           <label class="tool-label" style="color: {{selectedScopeColor}}">自选</label>
         </view>
