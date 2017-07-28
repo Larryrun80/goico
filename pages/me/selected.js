@@ -13,10 +13,10 @@ Page({
     searchPanelShow: false,
   },
 
-  loadData: function (dataToSet={}) {
+  loadData: function (loadType='normal') { // 重新加在本地数据
     let currencies = []
     let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
-    console.log(selected)
+
     for (let i in selected) {
       if (selected[i].currency) {
         currencies.push({
@@ -29,56 +29,19 @@ Page({
       }
     }
 
-    let keyword = this.data.keyword ? this.data.keyword: ''
-    if (!Object.keys(dataToSet).includes('keyword')) {
-      dataToSet.keyword = keyword
+    let keyword = ''
+    if (this.data.keyword && loadType == 'normal') {
+      keyword = this.data.keyword
     }
-    dataToSet.currencies = currencies
-    dataToSet.currenciesToShow = currencies
+    let searchPanelShow = loadType == 'normal' ? this.data.searchPanelShow : false
 
-    this.setData(dataToSet)
+    this.setData({
+      keyword: keyword,
+      searchPanelShow: searchPanelShow,
+      currencies: currencies,
+      currenciesToShow: currencies
+    })
   },
-
-  // getAllSymbols: function () {
-  //   let that = this
-  //   let url = settings.requestMarketListUrl + '?limit=2000'
-  //   let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
-
-  //   requests.request(
-  //     url,
-  //     function (res) {
-  //       if (res.data.code == 0) {
-  //         // console.log(res)
-  //         let currencies = []
-  //         for (let i in res.data.data.list) {
-  //           let currency = res.data.data.list[i].name + ' (' + res.data.data.list[i].symbol + ')'
-  //           let symbol_selected = false
-  //           if (selected.includes(res.data.data.list[i].symbol)) {
-  //             symbol_selected = true
-  //           }
-  //           currencies.push({
-  //             id: res.data.data.list[i].id,
-  //             currency: currency,
-  //             symbol: res.data.data.list[i].symbol,
-  //             symbol_selected: symbol_selected,
-  //           })
-  //         }
-
-  //         that.setData({
-  //           currencies: currencies,
-  //           currenciesToShow: currencies.sort(tools.by("symbol_selected", "desc")),
-  //         })
-  //       }
-  //     },
-  //     function (res) {
-  //       wx.showToast({
-  //         title: '获取数据失败，请稍候再试...',
-  //         duration: 1500,
-  //         image: '/images/exclamationmark.png'
-  //       })
-  //     }
-  //   )
-  // },
 
   redirectToDetail: function (res) {
     let symbol = res.currentTarget.dataset.symbol
@@ -93,12 +56,7 @@ Page({
 
     let item = selected.splice(seq, 1)
     selected.unshift(item[0])
-    console.log('item: ', item)
-    // wx.showToast({
-    //   title: item.symbol,
-    //   duration: 1500,
-    // })
-    // selected.unshift(item)
+
     wx.setStorageSync('selectedSymbols', selected)
     this.loadData()
   },
@@ -115,7 +73,7 @@ Page({
     this.filterData(keyword)
   },
 
-  filterData: function (keyword) {
+  filterData: function (keyword) { // 搜索加载远程数据
     var currenciesToShow = []
 
     let that = this
@@ -146,7 +104,6 @@ Page({
             })
           }
 
-          console.log(currencies)
           that.setData({
             keyword: keyword,
             currencies: currencies,
@@ -162,26 +119,10 @@ Page({
         })
       }
     )
-
-    // for (var i in this.data.currencies) {
-    //   if (this.data.currencies[i].currency.toUpperCase().indexOf(keyword.toUpperCase()) >= 0) {
-    //     currenciesToShow.push(this.data.currencies[i])
-    //   }
-    // }
-
-    // this.setData({
-    //   keyword: keyword,
-    //   currenciesToShow: currenciesToShow.sort(tools.by("symbol_selected", "desc")),
-    // })
   },
 
   onCancelImgTap: function () {
-    let dataToSet = {
-      keyword: '',
-      searchPanelShow: false,
-    }
-
-    this.loadData(dataToSet)
+    this.loadData('cancel_filter')
   },
 
   selectSymbol: function (e) {
@@ -189,11 +130,12 @@ Page({
 
     let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
     for (let i in showList) {
-      if (showList[i].symbol == e.currentTarget.dataset.symbol) {
+      if (showList[i].symbol == e.currentTarget.dataset.symbol) { // 找到需要操作的item
         if (showList[i].symbolSelected) {
           for (let si in selected) {
             if (selected[si].symbol == showList[i].symbol) {
               selected.splice(si, 1)
+              break
             }
           }
           showList[i].symbolSelected = false
@@ -211,17 +153,21 @@ Page({
     }
 
     wx.setStorageSync('selectedSymbols', selected)
-    this.loadData()
-    // this.setData({
-    //   currenciesToShow: showList
-    // })
+
+    if (this.data.searchPanelShow) {
+      this.setData({
+        currenciesToShow: showList
+      })
+    }else {
+      this.loadData()
+    }
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.loadData()
+    // this.loadData()
   },
 
   /**
@@ -235,7 +181,12 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    // this.loadData()
+    // 如果在搜索状态，加载远程数据，否则加载本地
+    if (this.data.searchPanelShow) {
+      this.filterData(this.data.keyword)
+    }else {
+      this.loadData()
+    }
   },
 
   /**

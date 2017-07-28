@@ -146,6 +146,7 @@ Page({
       }
     }
 
+    console.log(settings)
     return settings
   },
 

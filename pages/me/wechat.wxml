@@ -4,5 +4,5 @@
     加群请先加微信： 
     <text selectable="true" >wx_mytoken</text>
   </view>
-  <image id="qr-img" src="/images/wechat_qr.jpg"></image>
+  <image id="qr-img" src="https://ico.iknowapp.com/miss_mytoken.JPG"></image>
 </view>
