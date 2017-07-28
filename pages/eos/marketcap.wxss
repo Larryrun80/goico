@@ -135,7 +135,8 @@
   height: 80rpx;
   border-width: 0;
   align-items: center;
-  margin-right: 20rpx;
+  margin-right: 5rpx;
+  padding-right: 5rpx;
 }
 
 .xx-img{

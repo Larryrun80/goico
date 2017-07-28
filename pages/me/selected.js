@@ -13,12 +13,14 @@ Page({
     searchPanelShow: false,
   },
 
-  getSelectedSymbols: function () {
+  loadData: function (dataToSet={}) {
     let currencies = []
     let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
+    console.log(selected)
     for (let i in selected) {
       if (selected[i].currency) {
         currencies.push({
+          seq: i,
           currency: selected[i].currency,
           name: selected[i].name,
           symbol: selected[i].symbol,
@@ -26,10 +28,15 @@ Page({
         })
       }
     }
-    this.setData({
-      currencies: currencies,
-      currenciesToShow: currencies,
-    })
+
+    let keyword = this.data.keyword ? this.data.keyword: ''
+    if (!Object.keys(dataToSet).includes('keyword')) {
+      dataToSet.keyword = keyword
+    }
+    dataToSet.currencies = currencies
+    dataToSet.currenciesToShow = currencies
+
+    this.setData(dataToSet)
   },
 
   // getAllSymbols: function () {
@@ -80,6 +87,22 @@ Page({
     })
   },
 
+  upSymbol: function (res) {
+    let seq = parseInt(res.currentTarget.dataset.seq)
+    let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
+
+    let item = selected.splice(seq, 1)
+    selected.unshift(item[0])
+    console.log('item: ', item)
+    // wx.showToast({
+    //   title: item.symbol,
+    //   duration: 1500,
+    // })
+    // selected.unshift(item)
+    wx.setStorageSync('selectedSymbols', selected)
+    this.loadData()
+  },
+
   onBindFocus: function (e) {
     this.setData({
       // containerShow: false,
@@ -89,10 +112,10 @@ Page({
 
   onBindInput: function (event) {
     let keyword = event.detail.value;
-    this.reloadData(keyword)
+    this.filterData(keyword)
   },
 
-  reloadData: function (keyword) {
+  filterData: function (keyword) {
     var currenciesToShow = []
 
     let that = this
@@ -107,18 +130,23 @@ Page({
           let currencies = []
           for (let i in res.data.data.list) {
             let currency = res.data.data.list[i].name + ' (' + res.data.data.list[i].symbol + ')'
-            let symbol_selected = false
-            if (selected.includes(res.data.data.list[i].symbol)) {
-              symbol_selected = true
+            let symbolSelected = false
+            for (let j in selected) {
+              if (selected[j].symbol == res.data.data.list[i].symbol) {
+                symbolSelected = true
+                break
+              }
             }
+
             currencies.push({
               currency: currency,
               name: res.data.data.list[i].name,
               symbol: res.data.data.list[i].symbol,
-              symbol_selected: symbol_selected,
+              symbolSelected: symbolSelected,
             })
           }
 
+          console.log(currencies)
           that.setData({
             keyword: keyword,
             currencies: currencies,
@@ -148,13 +176,12 @@ Page({
   },
 
   onCancelImgTap: function () {
-    let keyword = ''
-    let that = this
-    this.setData({
-      keyword: keyword,
-      currenciesToShow: that.getSelectedSymbols(),
+    let dataToSet = {
+      keyword: '',
       searchPanelShow: false,
-    })
+    }
+
+    this.loadData(dataToSet)
   },
 
   selectSymbol: function (e) {
@@ -184,16 +211,17 @@ Page({
     }
 
     wx.setStorageSync('selectedSymbols', selected)
-    this.setData({
-      currenciesToShow: showList
-    })
+    this.loadData()
+    // this.setData({
+    //   currenciesToShow: showList
+    // })
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.getSelectedSymbols()
+    this.loadData()
   },
 
   /**
@@ -207,7 +235,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-  
+    // this.loadData()
   },
 
   /**

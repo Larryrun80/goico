@@ -5,7 +5,7 @@ page {
 .mcd-container {
   display: flex;
   flex-direction: column;
-  padding-top: 50rpx;
+  padding-top: 30rpx;
   height: 100%;
   border-color: '#888';
   background-color: #fff;
@@ -15,7 +15,7 @@ page {
   display: flex;
   flex-direction: column;
   margin-left: 30rpx;
-   margin-right: 30rpx; 
+  margin-right: 30rpx; 
 }
 
 .currency {
@@ -34,7 +34,7 @@ page {
   display: flex;
   flex-direction: row;
   /* justify-content: space-between; */
-  margin-top: 20rpx;
+  margin-top: 0;
   margin-bottom: 20rpx;
   align-items: center;
   height: 100rpx;

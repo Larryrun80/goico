@@ -277,7 +277,11 @@ Page({
     let keyword = options.filter ? options.filter : ''
     let sort = options.sort ? options.sort : 'rank'
 
-    this.updateMarketcap('top', keyword, sort)
+    // this.updateMarketcap('top', keyword, sort)
+    this.setData({
+      keyword: keyword,
+      sort: sort,
+    })
   
     wx.showShareMenu({
       withShareTicket: true
@@ -295,7 +299,8 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    let scope = this.data.selectedScope ? 'selected' : 'top'
+    this.updateMarketcap(scope, this.data.keyword, this.data.sort)
   },
 
   /**

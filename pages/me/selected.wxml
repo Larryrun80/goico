@@ -3,7 +3,7 @@
   <form>
     <view class="filter">
       <icon type="search" class="search-img" size="15" color="#405f80"></icon>
-      <input value="{{keyword}}" class="search-input" type="text" confirm-type="done" placeholder="输入币名" placeholder-class="placeholder" bindinput="onBindInput" bindfocus="onBindFocus" />
+      <input value="{{keyword}}" class="search-input" type="text" confirm-type="done" placeholder="输入币名添加自选" placeholder-class="placeholder" bindinput="onBindInput" bindfocus="onBindFocus" />
       <button id="cancel-btn" wx:if="{{searchPanelShow}}" plain="true" formType="reset" bindtap="onCancelImgTap"><image src="/images/close_btn.png" class="xx-img" ></image></button>
     </view>
   </form>
@@ -11,9 +11,12 @@
     <view wx:for="{{currenciesToShow}}" wx:for-item="item" wx:key="id" class="currencies-item">
       <view class="item-info">
         <view class="item-left" data-symbol="{{item.symbol}}" bindtap="redirectToDetail">{{item.currency}}</view>
-        <view class="item-star" data-symbol="{{item.symbol}}" bindtap="selectSymbol">
-          <image class="star" wx:if="{{item.symbolSelected}}" src="/images/star.png"></image>
-          <image class="star" wx:else src="/images/unstar.png"></image>
+        <view class="item-right">
+          <image wx:if="{{item.seq>0}}" class='stick' data-seq="{{item.seq}}" src="/images/stick.png" bindtap="upSymbol"></image>
+          <view class="item-star" data-symbol="{{item.symbol}}" bindtap="selectSymbol">
+            <image class="star" wx:if="{{item.symbolSelected}}" src="/images/star.png"></image>
+            <image class="star" wx:else src="/images/unstar.png"></image>
+          </view>
         </view>
       </view>
       <view class="item-line"></view>

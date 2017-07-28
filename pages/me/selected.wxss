@@ -74,6 +74,12 @@
   width: 80%;
 }
 
+.item-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .item-star {
   display: flex;
   flex-direction: row;
@@ -86,4 +92,10 @@
 .star {
   width: 64rpx;
   height: 64rpx;
+}
+
+.stick {
+  width: 64rpx;
+  height: 64rpx;
+  margin-right: 60rpx;
 }

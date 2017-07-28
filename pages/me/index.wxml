@@ -15,7 +15,7 @@
     <view class="cell">
       <view class="left-cell">币行情展示</view>
       <view class="right-cell"><view class="section">
-          <picker bindchange="setSymbolCnt" value="{{symbolCntIndex}}" range="{{symbolCnt}}">
+          <picker class='picker-view' bindchange="setSymbolCnt" value="{{symbolCntIndex}}" range="{{symbolCnt}}">
             <view class="picker">
               {{symbolCnt[symbolCntIndex]}}
               <image class="detail" src="/images/detail_btn.png"></image>
@@ -29,7 +29,7 @@
       <view class="left-cell">币价单位</view>
       <view class="right-cell">
         <view class="section">
-          <picker bindchange="setFiat" value="{{defaultFiatIndex}}" range="{{fiatList}}">
+          <picker class='picker-view' bindchange="setFiat" value="{{defaultFiatIndex}}" range="{{fiatList}}">
             <view class="picker">
               {{fiatList[defaultFiatIndex]}}
               <image class="detail" src="/images/detail_btn.png"></image>
