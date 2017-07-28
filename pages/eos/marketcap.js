@@ -30,8 +30,9 @@ Page({
 
   onBindInput: function (event) {
     let keyword = event.detail.value;
-    let scope = this.data.selectedScope ? 'selected' : 'top'
-    this.flushData(scope, keyword, this.data.sort)
+    // let scope = this.data.selectedScope ? 'selected' : 'top'
+    this.updateMarketcap('filter', keyword, this.data.sort)
+    // this.flushData(scope, keyword, this.data.sort)
   },
 
   onBindBlur: function (event) {
@@ -43,7 +44,8 @@ Page({
   onCancelImgTap: function (event) {
     let keyword = ''
     let scope = this.data.selectedScope ? 'selected' : 'top'
-    this.flushData(scope, keyword, this.data.sort)
+    this.updateMarketcap(scope, keyword, this.data.sort)
+    // this.flushData(scope, keyword, this.data.sort)
     this.setData({
       // containerShow: true,
       searchPanelShow: false,      
@@ -81,9 +83,8 @@ Page({
       trendDecreaseCss = 'item-trend-green'
     }
 
-    // top 200 or top 500
+    // generate request url by scope
     let url = settings.requestMarketListUrl
-    let symbolCnt = wx.getStorageSync('symbolCntIndex')
     if (scope == 'selected') {
       let selected = wx.getStorageSync('selectedSymbols')
       let selectedSymbols = []
@@ -105,13 +106,21 @@ Page({
         return
       }
     }
-    else {
+
+    if (scope == 'top') {
+      let symbolCnt = wx.getStorageSync('symbolCntIndex')
       let url_param = 'limit=200'
       if (symbolCnt && symbolCnt == 1) {
         url_param = 'limit=500'
       }
       url = url + '?' + url_param
     }
+
+    if (scope == 'filter') {
+      url = url + '?symbol=' + keyword.trim()
+    }
+
+    // start request
     requests.request(
       url,
       function (res) {
@@ -165,7 +174,7 @@ Page({
       return null
     }
   
-    if (!scope in ['top', "selected"]) {
+    if (!scope in ['top', "selected", "filter"]) {
       return null
     }
 
@@ -198,7 +207,8 @@ Page({
       }
       settings.selectedScope = false
     }
-    else {  // if selected Symbols
+
+    if (scope == 'selected') {  // if selected Symbols
       let symbols = {}
       for (let i in symbolsToShow) {
         symbols[symbolsToShow[i].symbol] = symbolsToShow[i]
