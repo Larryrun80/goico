@@ -33,7 +33,6 @@ function by(key, sort_direction = "asc") {
   }
 }
 
-
 module.exports = {
   friendlyNumber: friendlyNumber,
   by: by

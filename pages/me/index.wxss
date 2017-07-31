@@ -36,8 +36,8 @@ page {
   color: #aaa;
   font-style: italic;
   font-size: 24rpx;
-  margin: 20rpx 50rpx;
-  line-height: 30rpx;
+  margin: 40rpx 50rpx 20rpx 50rpx;
+  line-height: 40rpx;
 }
 
 .trend-switch {

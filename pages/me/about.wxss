@@ -29,6 +29,12 @@
   margin-top: 30rpx;
 }
 
+.date {
+  font-size: 20rpx;
+  color: #666;
+  margin-top: 10rpx;
+}
+
 .updates {
   display: flex;
   flex-direction: column;

@@ -2,6 +2,8 @@
 var tools = require('../../utils/tools.js')
 var requests = require('../../utils/requests.js')
 var settings = require('../../secret/settings.js')
+var sc = require('../../utils/selectedCurrency.js')
+var app = getApp()
 
 Page({
   /**
@@ -19,25 +21,34 @@ Page({
     rankSortColor: "#000",
     selectedScopeColor: "#999",
     riseRed: false,
+    focus: false,
   },
 
   onBindFocus: function (e) {
     this.setData({
       // containerShow: false,
       searchPanelShow: true,
+      focus: true,
     })
   },
 
   onBindInput: function (event) {
-    let keyword = event.detail.value;
+    let keyword = event.detail.value
+    this.setData({
+      keyword: keyword
+    })
     // let scope = this.data.selectedScope ? 'selected' : 'top'
-    this.updateMarketcap('filter', keyword, this.data.sort)
-    // this.flushData(scope, keyword, this.data.sort)
+    // this.updateMarketcap('filter', keyword, this.data.sort)
+  },
+
+  search: function (event) {
+    this.updateMarketcap('filter', this.data.keyword, this.data.sort)
   },
 
   onBindBlur: function (event) {
     this.setData({
       searchPanelShow: false,
+      focus: false,
     })
   },
 
@@ -46,17 +57,17 @@ Page({
     let scope = this.data.selectedScope ? 'selected' : 'top'
     this.updateMarketcap(scope, keyword, this.data.sort)
     // this.flushData(scope, keyword, this.data.sort)
-    this.setData({
-      // containerShow: true,
-      searchPanelShow: false,      
-    })
+    // this.setData({
+    //   // containerShow: true,
+    //   searchPanelShow: false,      
+    // })
   },
 
   redirectToDetail: function (res) {
-    let name = res.currentTarget.dataset.name
+    let cid = res.currentTarget.dataset.cid
     let symbol = res.currentTarget.dataset.symbol
     wx.navigateTo({
-      url: 'mcdetail?symbol=' + symbol
+      url: 'mcdetail?symbol=' + symbol + '&cid=' +cid
     })
   },
 
@@ -86,23 +97,28 @@ Page({
     // generate request url by scope
     let url = settings.requestMarketListUrl
     if (scope == 'selected') {
-      let selected = wx.getStorageSync('selectedSymbols')
-      let selectedSymbols = []
-      for (let i in selected) {
-        if (selected[i].currency) {
-          selectedSymbols.push(selected[i].symbol)
-        }
-      }
-      console.log
-      let url_param = selectedSymbols.join()
-      if (url_param) {
-        url = url + '?symbol=' + url_param
+      let selected_url = sc.getRemoteUrl()
+      if (selected_url != url) {
+        url = selected_url
       }
       else {
-        wx.showToast({
-          title: '当前没有自选货币，请先到币详情或设置页面添加',
-          duration: 2000,
+        wx.showModal({
+          title: '尚未添加自选行情',
+          content: '您可以在"我的"->"币行情自选"页面搜索添加',
+          confirmText: '现在添加',
+          confirmColor: '#2196F3',
+          cancelColor: '#888',
+          success: function (result) {
+            if (result.confirm) {
+              wx.navigateTo({
+                url: '/pages/me/selected',
+              })
+            } else if (result.cancel) {
+              console.log('用户点击取消')
+            }
+          }
         })
+
         return
       }
     }
@@ -137,6 +153,7 @@ Page({
               priceShow = '$' + priceUSD
             }
             mcList.push({
+              cid: mcListRaw[i].currency_id,
               name: mcListRaw[i].name,
               symbol: mcListRaw[i].symbol,
               rank: mcListRaw[i].rank,
@@ -179,6 +196,7 @@ Page({
     }
 
     // get filtered result
+    settings.scope = scope
     settings.keyword = keyword
     let symbolsToShow = this.getSymbolsToShow(keyword, originData)
 
@@ -206,45 +224,60 @@ Page({
         symbolsToShow = symbolsToShow.sort(tools.by("percentChange", "desc"))
       }
       settings.selectedScope = false
+      settings.searchPanelShow = false
+      settings.focus = false
     }
 
     if (scope == 'selected') {  // if selected Symbols
-      let symbols = {}
-      for (let i in symbolsToShow) {
-        symbols[symbolsToShow[i].symbol] = symbolsToShow[i]
-      }
-
+      let symbolsTemp = symbolsToShow
       symbolsToShow = []
-      let selectedSymbols = wx.getStorageSync('selectedSymbols')
-      for (let i in selectedSymbols) {
-        if (selectedSymbols[i].symbol && symbols[selectedSymbols[i].symbol]) {
-          symbolsToShow.push(symbols[selectedSymbols[i].symbol])
+      let [selected, ] = sc.loadSelectedData()
+      for (let i in selected) {
+        for (let j in symbolsTemp) {
+          if ((selected[i].currency_id && selected[i].currency_id == symbolsTemp[j].cid) ||
+            (selected[i].name == symbolsTemp[j].name && selected[i].symbol == symbolsTemp[j].symbol)) {
+            symbolsToShow.push(symbolsTemp[j])
+          }
         }
       }
+
       settings.selectedScope = true
       settings.sort = ''
       settings.rateSortColor = unselectedColor
       settings.rankSortColor = unselectedColor
       settings.selectedScopeColor = selectedColor
+      settings.searchPanelShow = false
+      settings.focus = false
     }
-
-    // scope
-    // if (scope == "top") {
-    //   settings.topScopeColor = selectedColor
-    //   settings.selectedScopeColor = unselectedColor
-    //   settings.scope = 'top'
-    // }
-    // if (scope == "selected") {
-    //   settings.topScopeColor = unselectedColor
-    //   settings.selectedScopeColor = selectedColor
-    //   settings.scope = 'selected'
-    // }
 
     settings.symbols = originData
     settings.symbolsToShow = symbolsToShow
     this.setData(
       settings
     )
+
+    wx.setStorage({
+      key: 'coinListParams',
+      data: {
+        scope: scope,
+        sort: settings.sort,
+      },
+    })
+  },
+
+  getCurrentScope: function () {
+    let scope = 'top'
+
+    if (this.data.selectedScope) {
+      scope = 'selected'
+    }
+
+    if (this.data.keyword) {
+      scope = 'filter'
+    }
+
+    // console.log('[carketcap] -getCurrentScope- scope: ', scope)
+    return scope
   },
 
   sortByRate: function () {
@@ -284,13 +317,39 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    let keyword = options.filter ? options.filter : ''
-    let sort = options.sort ? options.sort : 'rank'
+    let keyword = ''
+    let sort = 'rank'
+    let scope = 'top'
+
+    if (options.sort) {
+      sort = options.sort
+    }
+
+    if (options.keyword) {
+      keyword = options.keyword
+      scope = 'filter'
+    }
+
+    if (!options.keyword && !options.sort) {  // 如果是从分享进入
+      let storageData = wx.getStorageSync('coinListParams')
+      if (storageData.scope) {
+        scope = storageData.scope
+      }
+      if (storageData.sort) {
+        sort = storageData.sort
+      }
+    }
 
     // this.updateMarketcap('top', keyword, sort)
+    let selectedScope = (scope == 'selected') ? true : false
+    let searchPanelShow = (scope == 'filter') ? true : false
+    console.log(keyword, sort, selectedScope, searchPanelShow)
     this.setData({
       keyword: keyword,
       sort: sort,
+      selectedScope: selectedScope,
+      searchPanelShow: searchPanelShow,
+      focus: false,
     })
   
     wx.showShareMenu({
@@ -309,7 +368,8 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    let scope = this.data.selectedScope ? 'selected' : 'top'
+    let scope = this.getCurrentScope()
+    console.log(scope, this.data.keyword, this.data.sort)
     this.updateMarketcap(scope, this.data.keyword, this.data.sort)
   },
 
@@ -317,21 +377,28 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-  
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-  
+    let data = {
+      scope: this.data.selectedScope,
+      sort: this.data.sort,
+    }
+
+    wx.setStorage({
+      key: 'coinListParams',
+      data: data,
+    })
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    let scope = this.data.selectedScope ? 'selected' : 'top'
+    let scope = this.getCurrentScope()
     this.updateMarketcap(scope, this.data.keyword, this.data.sort)
     wx.stopPullDownRefresh()
   },
@@ -353,7 +420,7 @@ Page({
     }
     return {
       title: '币行情',
-      path: '/pages/eos/marketcap?filter=' + this.data.keyword + '&sort=' + this.data.sort,
+      path: '/pages/eos/marketcap?keyword=' + this.data.keyword + '&sort=' + this.data.sort,
       success: function (res) {
         // 转发成功
         wxg.shareComplete(res)

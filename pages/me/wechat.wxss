@@ -6,7 +6,7 @@
 }
 
 .wx-title {
-  margin-top: 300rpx;
+  margin-top: 20rpx;
   display: flex;
   flex-direction: row;
   color: #888;
@@ -25,4 +25,8 @@
   height: 243px;
   border: 2rpx;
   border-color: #ddd;
+}
+
+.placeholder {
+  height: 50rpx;
 }

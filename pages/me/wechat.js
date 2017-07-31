@@ -8,6 +8,32 @@ Page({
   
   },
 
+  copyWX: function () {
+    let info = 'wx_mytoken'
+    wx.showModal({
+      title: '复制微信',
+      content: '小程序内无法识别二维码，您可以复制微信号后搜索添加',
+      confirmText: '现在复制',
+      confirmColor: '#2196F3',
+      cancelColor: '#888',
+      success: function (res) {
+        if (res.confirm) {
+          wx.setClipboardData({
+            data: info,
+            success: function (res) {
+              // wx.showToast({
+              //   title: '已复制到您的黏贴板',
+              //   duration: 1500
+              // })
+            }
+          })
+        } else if (res.cancel) {
+          console.log('用户点击取消')
+        }
+      }
+    })
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */

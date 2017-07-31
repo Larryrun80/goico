@@ -150,6 +150,25 @@ Page({
     return settings
   },
 
+  clearStorage: function () {
+    let that = this
+    wx.showModal({
+      title: '您正在清除缓存',
+      content: '清除缓存后，您的自选货币和之前的设置数据都会丢失，需要重新设置',
+      confirmText: '清除缓存',
+      confirmColor: '#2196F3',
+      cancelColor: '#888',
+      success: function (result) {
+        if (result.confirm) {
+          wx.clearStorageSync()
+          that.onShow()
+        } else if (result.cancel) {
+          console.log('用户点击取消')
+        }
+      }
+    })
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */

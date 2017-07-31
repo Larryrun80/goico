@@ -9,6 +9,14 @@ App({
     this.initData()
   },
 
+  onHide: function() {
+    // console.log(this.globalData)
+    // for (let key of Object.keys(this.globalData.closeSettings)) {
+    //   console.log(key, this.globalData.closeSettings[key])
+    //   wx.setStorageSync(key, this.globalData.closeSettings[key])
+    // }
+  },
+
   getUserInfo: function(cb) {
     var that = this
     if (this.globalData.userInfo) {
@@ -26,7 +34,8 @@ App({
   },
 
   globalData: {
-    userInfo: null
+    userInfo: null,
+    closeSettings: [], // 进程销毁时需保留的设置
   },
 
   initData: function () {

@@ -1,5 +1,5 @@
 <template name="coinItems">
-  <view class="coin-item" data-name="{{name}} ({{symbol}})" data-symbol="{{symbol}}" bindtap="redirectToDetail">
+  <view class="coin-item" data-cid="{{cid}}" data-symbol="{{symbol}}" bindtap="redirectToDetail">
     <view class="coin-info">
       <view class="item-left">
         <view class="item-rank">#{{rank}}, {{name}}</view>

@@ -7,9 +7,6 @@
         <icon type="search" class="search-img" size="15" color="#405f80"></icon>
       </view>
       <view class='switch-line' wx:if="{{!searchPanelShow}}">
-        <!-- <view bindtap="bindTopScope">
-          <label class="tool-label" style="color: {{topScopeColor}}">Top 200</label>
-        </view> -->
         <view bindtap="bindSelectedScope">
           <label class="tool-label" style="color: {{selectedScopeColor}}">自选</label>
         </view>
@@ -17,7 +14,7 @@
           <label class="tool-label" style="color: {{rankSortColor}}">市值</label>
         </view>
         <view class="rate-sort-container" bindtap="sortByRate">
-          <label class="tool-label" style="color: {{rateSortColor}}">涨幅</label>
+          <label class="tool-label" maxlength="20" style="color: {{rateSortColor}}">涨幅</label>
           <view class="sort-img-view">
             <image wx:if="{{ sort != 'rate_asc' && sort != 'rate_desc' }}" id="sort-img" src="/images/arrow_default.png"></image>
             <image wx:else id="sort-img" src="/images/arrow_{{sort}}.png"></image>
@@ -26,7 +23,7 @@
       </view>
 
       <view class='switch-line' wx:else>
-        <input value="{{keyword}}" type="text" confirm-type="done" placeholder="输入币名" placeholder-class="placeholder" bindinput="onBindInput"/>
+        <input class="search-input" value="{{keyword}}" type="text" confirm-type="search" bindconfirm='search' placeholder="输入币名" placeholder-class="placeholder" focus="{{focus}}" bindinput="onBindInput"/>
         <button id="cancel-btn" wx:if="{{searchPanelShow}}" plain="true" formType="reset" bindtap="onCancelImgTap"><image src="/images/close_btn.png" class="xx-img" ></image></button>
       </view>
     </view>

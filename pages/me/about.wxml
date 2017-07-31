@@ -3,12 +3,15 @@
   <view class="info">
     <image id="logo" src="/images/mt_logo.png"></image>
     <view class="brand">MyToken</view>
-    <view class="version">小程序版本号 v0.3.0</view>
+    <view class="version">小程序版本号 v0.3.2</view>
+    <view class="date">发布时间: 2017-08-01</view>
   </view>
   <view class="updates">
     <view class="title">更新内容</view>
-    <view class="content">1. 增加了“我的”tab页</view>
-    <view class="content">2. 个性化定制货币单位，涨跌颜色等</view>
-    <view class="content">3. 增加了自选行情功能</view>
+    <view class="content">修复自选bug</view>
+    <view class="content">搜索功能优化</view>
+    <view class="content">自选功能优化</view>
+    <view class="content">分享优化</view>
+    <view class="content">长按复制加群微信</view>
   </view>
 </view>

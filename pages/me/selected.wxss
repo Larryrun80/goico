@@ -7,6 +7,7 @@
 .filter {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   background-color: #f1f1f1;
   width: 100%;
@@ -14,17 +15,17 @@
 }
 
 #cancel-btn {
-  width: 60rpx;
+  width: 80rpx;
   height: 80rpx;
   border-width: 0;
-  align-items: center;
-  margin-right: 20rpx;
+  padding-left: 20rpx;
+  padding-top: -10rpx;
+  margin-right: 30rpx;
 }
 
 .xx-img{
     height: 30rpx;
     width: 30rpx;
-    margin: auto;
 }
 
 .search-img {
@@ -32,7 +33,7 @@
 }
 
 .search-input {
-  width: 100%;
+  width: 95%;
   margin-left: 20rpx;
   color: #000;
   font-size: 28rpx;

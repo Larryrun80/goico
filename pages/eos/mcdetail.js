@@ -2,6 +2,7 @@
 var tools = require('../../utils/tools.js')
 var requests = require('../../utils/requests.js')
 var settings = require('../../secret/settings.js')
+var sc = require('../../utils/selectedCurrency.js')
 
 Page({
   /**
@@ -51,7 +52,7 @@ Page({
     })
   },
 
-  updateCurrency: function(symbol) {
+  updateCurrency: function(cid) {
     let that = this
     let fiat = wx.getStorageSync('defaultFiatIndex')
     let riseColor = wx.getStorageSync('riseColor')
@@ -63,7 +64,7 @@ Page({
     }
 
     requests.request(
-      settings.requestCurrencyUrl + '?symbol=' + symbol,
+      settings.requestCurrencyUrl + '?currency_id=' + cid,
       function (res) {
         if (res.data.code == 0) {
           let priceCNY = res.data.data.market_cap.price_cny > 0.01 ? tools.friendlyNumber(res.data.data.market_cap.price_cny.toFixed(2)) : res.data.data.market_cap.price_cny
@@ -74,7 +75,8 @@ Page({
             priceShow = '$' + priceUSD
           }
           that.setData({
-            symbol: symbol,
+            cid: res.data.data.market_cap.currency_id,
+            symbol: res.data.data.market_cap.symbol,
             name: res.data.data.name,
             currency: res.data.data.name && res.data.data.symbol ? res.data.data.name + " (" + res.data.data.symbol + ")" : '--',
             priceCNY: priceCNY,
@@ -92,7 +94,7 @@ Page({
             markets: res.data.data.markets ? res.data.data.markets : [],
             trendIncreaseCss: trendIncreaseCss,
             trendDecreaseCss: trendDecreaseCss,
-            symbolSelected: that.isSelected(symbol),
+            symbolSelected: that.isSelected(res.data.data.market_cap.currency_id, res.data.data.market_cap.symbol),
           }) 
         }
       },
@@ -108,51 +110,33 @@ Page({
 
   selectSymbol: function () {
     let status = this.data.symbolSelected
+    let cid = this.data.cid
     let symbol = this.data.symbol
-    let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
+    let name = this.data.name
 
     if (status) {
-      for (let i in selected) {
-        if (selected[i].symbol == symbol) {
-          selected.splice(i, 1)
-          break
-        }
-      }
+      sc.selectCurrency(cid, name, symbol, false)
     }
     else {
-      selected.push({
-        currency: this.data.currency,
-        name: this.data.name,
-        symbol: symbol,
-      })
+      sc.selectCurrency(cid, name, symbol, true)
     }
 
-    wx.setStorageSync('selectedSymbols', selected)
     this.setData({
       symbolSelected: !status
     })
   },
 
-  isSelected: function (symbol) {
-    let selected = wx.getStorageSync('selectedSymbols')
-    let selectedSymbols = []
-    console.log(selected)
-    for (let i in selected) {
-      selectedSymbols.push(selected[i].symbol)
-    }
-    if (selectedSymbols && selectedSymbols.includes(symbol)) {
-      return true
-    }
-    return false
+  isSelected: function (cid, symbol) {
+    return sc.isSelected(cid, symbol)
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log('options: ', options)
+    // console.log('options: ', options)
     if (!options.symbol) { this.seeAll(); return }
-    this.updateCurrency(options.symbol)
+    this.updateCurrency(options.cid)
 
     wx.setNavigationBarTitle({
       title: options.symbol
@@ -217,7 +201,7 @@ Page({
     }
     return {
       title: this.data.name,
-      path: '/pages/eos/mcdetail?symbol=' + this.data.symbol,
+      path: '/pages/eos/mcdetail?symbol=' + this.data.symbol + '&cid=' + this.data.cid,
       success: function (res) {
         // 转发成功
         wxg.shareComplete(res)

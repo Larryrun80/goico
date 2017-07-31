@@ -2,6 +2,7 @@
 var tools = require('../../utils/tools.js')
 var requests = require('../../utils/requests.js')
 var settings = require('../../secret/settings.js')
+var sc = require('../../utils/selectedCurrency.js')
 
 Page({
 
@@ -14,20 +15,8 @@ Page({
   },
 
   loadData: function (loadType='normal') { // 重新加在本地数据
-    let currencies = []
-    let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
-
-    for (let i in selected) {
-      if (selected[i].currency) {
-        currencies.push({
-          seq: i,
-          currency: selected[i].currency,
-          name: selected[i].name,
-          symbol: selected[i].symbol,
-          symbolSelected: true,
-        })
-      }
-    }
+    let [currencies, ] = sc.loadSelectedData()
+    console.log('[selected] -loadData- currencies: ', currencies)
 
     let keyword = ''
     if (this.data.keyword && loadType == 'normal') {
@@ -69,16 +58,19 @@ Page({
   },
 
   onBindInput: function (event) {
-    let keyword = event.detail.value;
-    this.filterData(keyword)
+    this.setData({ keyword: event.detail.value})
+  },
+
+  search: function () {
+    this.filterData(this.data.keyword)
   },
 
   filterData: function (keyword) { // 搜索加载远程数据
     var currenciesToShow = []
 
     let that = this
-    let url = settings.requestMarketListUrl + '?symbol=' + keyword
-    let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
+    let url = settings.requestMarketListUrl + '?symbol=' + keyword.trim()
+    let [selected, ] = sc.loadSelectedData()
 
     requests.request(
       url,
@@ -90,13 +82,15 @@ Page({
             let currency = res.data.data.list[i].name + ' (' + res.data.data.list[i].symbol + ')'
             let symbolSelected = false
             for (let j in selected) {
-              if (selected[j].symbol == res.data.data.list[i].symbol) {
+              if ((selected[j]['currency_id'] && selected[j]['currency_id'] == res.data.data.list[i].currency_id) ||
+                (selected[j]['symbol'] == res.data.data.list[i]['symbol'] && selected[j]['name'] == res.data.data.list[i]['name'])) {
                 symbolSelected = true
                 break
               }
             }
 
             currencies.push({
+              currency_id: res.data.data.list[i].currency_id,
               currency: currency,
               name: res.data.data.list[i].name,
               symbol: res.data.data.list[i].symbol,
@@ -104,6 +98,7 @@ Page({
             })
           }
 
+          console.log('[selected] -filterData- currencies: ',currencies)
           that.setData({
             keyword: keyword,
             currencies: currencies,
@@ -125,42 +120,46 @@ Page({
     this.loadData('cancel_filter')
   },
 
-  selectSymbol: function (e) {
+  stickDisabled: function (e) {
+    let message = '无法置顶：' + e.currentTarget.dataset.symbol + '已经位于关注列表顶部'
+    if (parseInt(e.currentTarget.dataset.seq) > 0) {
+      message = '无法置顶：您已经取消了对' + e.currentTarget.dataset.symbol + '的关注'
+    }
+
+    wx.showToast({
+      title: message,
+      duration: 1500,
+    })
+  },
+
+  selectCurrency: function (e) {
     let showList = this.data.currenciesToShow
 
-    let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
+    // let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
     for (let i in showList) {
-      if (showList[i].symbol == e.currentTarget.dataset.symbol) { // 找到需要操作的item
+      if (showList[i].symbol == e.currentTarget.dataset.symbol && showList[i].name == e.currentTarget.dataset.name) { // 找到需要操作的item
         if (showList[i].symbolSelected) {
-          for (let si in selected) {
-            if (selected[si].symbol == showList[i].symbol) {
-              selected.splice(si, 1)
-              break
-            }
-          }
+          sc.selectCurrency(e.currentTarget.dataset.cid, e.currentTarget.dataset.name, e.currentTarget.dataset.symbol, false)
           showList[i].symbolSelected = false
         }
         else {
-          selected.push({
-            currency: showList[i].name + ' (' + showList[i].symbol + ')',
-            name: showList[i].name,
-            symbol: showList[i].symbol,
-          })
+          sc.selectCurrency(e.currentTarget.dataset.cid, e.currentTarget.dataset.name, e.currentTarget.dataset.symbol, true, parseInt(e.currentTarget.dataset.seq))
           showList[i].symbolSelected = true
         }
         break
       }
     }
 
-    wx.setStorageSync('selectedSymbols', selected)
-
-    if (this.data.searchPanelShow) {
-      this.setData({
-        currenciesToShow: showList
-      })
-    }else {
-      this.loadData()
-    }
+    this.setData({
+      currenciesToShow: showList
+    })
+    // if (this.data.searchPanelShow) {
+    //   this.setData({
+    //     currenciesToShow: showList
+    //   })
+    // }else {
+    //   this.loadData()
+    // }
   },
 
   /**

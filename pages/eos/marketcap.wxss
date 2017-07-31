@@ -1,14 +1,6 @@
 /* pages/eos/marketcap.wxss */
 @import "../template/coin-items/coin-items.wxss";
 
-/* .sortfilter {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  background-color: #f1f1f1;
-  height: 80rpx;
-} */
-
 .split-line {
   width: 2rpx;
   height: 50rpx;
@@ -42,12 +34,12 @@
   margin-right: 25rpx;
 }
 
-.search-btn {
+ .search-btn {
   width: 80rpx;
   height: 80rpx;
   display: flex;
   align-items: center;
-}
+} 
 
 .search-img {
   margin: auto auto;
@@ -109,16 +101,18 @@
   color: #d1d1d1;
 }
 
-/* .search input {
-  margin-left: 80rpx;
+.search-input {
+  width: 95%;
+  margin-left: 20rpx;
+  color: #000;
   font-size: 28rpx;
-} */
+}
 
 #share-btn {
   width: 50rpx;
   height: 60rpx;
   border-width: 0;
-  align-items: center;
+  align-items: center;  
   margin-right: 30rpx;
   padding: 0;
 }
@@ -131,16 +125,15 @@
 }
 
 #cancel-btn {
-  width: 60rpx;
+  width: 80rpx;
   height: 80rpx;
   border-width: 0;
-  align-items: center;
-  margin-right: 5rpx;
-  padding-right: 5rpx;
+  padding-left: 25rpx;
+  padding-top: -10rpx;
+  margin-right: 30rpx;
 }
 
 .xx-img{
     height: 30rpx;
     width: 30rpx;
-    margin: auto;
 }
