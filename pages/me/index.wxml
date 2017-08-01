@@ -55,7 +55,7 @@
     <view class="item-line"></view>
     <view class="cell"  bindtap="aboutUs">
       <view class="left-cell">关于我们</view>
-      <view class="right-cell">v0.3.2
+      <view class="right-cell">v0.3.3
         <image class="detail" src="/images/detail_btn.png"></image>
       </view>
     </view>
