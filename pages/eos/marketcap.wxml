@@ -20,6 +20,9 @@
             <image wx:else id="sort-img" src="/images/arrow_{{sort}}.png"></image>
           </view>
         </view>
+        <view bindtap="getYunbiData">
+          <label class="tool-label" style="color: {{yunbiColor}}">假装在云币</label>
+        </view>
       </view>
 
       <view class='switch-line' wx:else>

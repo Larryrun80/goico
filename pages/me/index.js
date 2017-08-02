@@ -173,7 +173,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    var that = this
+    let that = this
     app.getUserInfo(function (userInfo) {
       //更新数据
       that.setData({
@@ -196,6 +196,18 @@ Page({
     this.getMessage()
     let settings = this.loadDefaultSettings()
     this.setData(settings)
+
+    if (app.globalData.tmpParams.settingsAction == 'add selected') {
+      app.globalData.tmpParams.settingsAction = ''
+      setTimeout(
+        function () {
+          wx.navigateTo({
+            url: '/pages/me/selected',
+          })
+        },
+        500
+      )
+    }
   },
 
   /**

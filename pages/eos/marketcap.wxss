@@ -31,7 +31,6 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-right: 25rpx;
 }
 
  .search-btn {
@@ -62,7 +61,7 @@
 }
 
 .left-tool {
-  width: 80%;
+  width: 100%;
   display: flex;
   flex-direction: row;  
   align-items: center;

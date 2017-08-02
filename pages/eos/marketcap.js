@@ -20,6 +20,7 @@ Page({
     rateSortColor: "#999",
     rankSortColor: "#000",
     selectedScopeColor: "#999",
+    yunbiColor: "#999",
     riseRed: false,
     focus: false,
   },
@@ -37,8 +38,6 @@ Page({
     this.setData({
       keyword: keyword
     })
-    // let scope = this.data.selectedScope ? 'selected' : 'top'
-    // this.updateMarketcap('filter', keyword, this.data.sort)
   },
 
   search: function (event) {
@@ -56,11 +55,6 @@ Page({
     let keyword = ''
     let scope = this.data.selectedScope ? 'selected' : 'top'
     this.updateMarketcap(scope, keyword, this.data.sort)
-    // this.flushData(scope, keyword, this.data.sort)
-    // this.setData({
-    //   // containerShow: true,
-    //   searchPanelShow: false,      
-    // })
   },
 
   redirectToDetail: function (res) {
@@ -110,8 +104,10 @@ Page({
           cancelColor: '#888',
           success: function (result) {
             if (result.confirm) {
-              wx.navigateTo({
-                url: '/pages/me/selected',
+              app.globalData.tmpParams = {settingsAction: 'add selected'}
+              console.log(app.globalData)
+              wx.switchTab({
+                url: '/pages/me/index',
               })
             } else if (result.cancel) {
               console.log('用户点击取消')
