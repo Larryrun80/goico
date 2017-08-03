@@ -51,6 +51,16 @@
   justify-content: space-between;
   align-items: center;
   height: 80rpx;
+  width: 100%;
+  /* position: fixed;
+  top: 0;
+  padding: 0; 
+  z-index: 100; */
+}
+
+.placeholder-view {
+  height: 80rpx;
+  background-color: #F9F9F9;
 }
 
 .switch-line {
@@ -92,7 +102,7 @@
   width: 2rpx;
   height: 60rpx;
   background: #e5e5e5;
-  margin-left: 30rpx;
+  margin-left: 10rpx;
 }
 
 .placeholder {
@@ -109,11 +119,10 @@
 
 #share-btn {
   width: 50rpx;
-  height: 60rpx;
   border-width: 0;
   align-items: center;  
   margin-right: 30rpx;
-  padding: 0;
+  padding: 20rpx 0 0 0;
 }
 
 .share-img {
@@ -125,14 +134,37 @@
 
 #cancel-btn {
   width: 80rpx;
-  height: 80rpx;
   border-width: 0;
+  align-items: center;
+  padding-top: 10rpx;
   padding-left: 25rpx;
-  padding-top: -10rpx;
   margin-right: 30rpx;
 }
 
 .xx-img{
     height: 30rpx;
     width: 30rpx;
+    margin: auto;
+}
+
+.add-select-btn {
+  margin: 10rpx 30rpx;
+  background-color: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 30rpx;
+  font-size: 26rpx;
+  color: #d1d1d1;
+}
+
+.detail {
+  width: 16rpx;
+  height: 26rpx;
+  margin-left: 10rpx;
+}
+
+.add-selected-bottom {
+  height: 20rpx;
 }

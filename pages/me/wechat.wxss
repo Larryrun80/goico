@@ -28,5 +28,5 @@
 }
 
 .placeholder {
-  height: 50rpx;
+  height: 30rpx;
 }

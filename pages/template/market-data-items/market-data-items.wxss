@@ -24,28 +24,12 @@
   align-items: center;
 }
 
-.item-rank {
-  font-size: 26rpx;
-  color: #000;
-  font-weight: bold;
-  line-height: 37rpx;
-  margin-top: 5rpx;
-}
-
 .item-name {
   font-size: 40rpx;
   color: #000;
   font-weight: bold;
   padding-top: 8rpx;
   line-height: 60rpx;
-}
-
-.item-cap {
-  font-size: 26rpx;
-  color: #888;
-  margin-top: 2rpx;
-  line-height: 37rpx;
-  margin-bottom: 5rpx;
 }
 
 .item-price {

@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "币行情自选"
+  "navigationBarTitleText": "币行情自选",
+  "navigationBarBackgroundColor": "#F9F9F9",
+  "navigationBarTextStyle": "black"
 }

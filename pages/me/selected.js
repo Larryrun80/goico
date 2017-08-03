@@ -43,8 +43,17 @@ Page({
     let seq = parseInt(res.currentTarget.dataset.seq)
     let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
 
-    let item = selected.splice(seq, 1)
-    selected.unshift(item[0])
+    selected = tools.swapItems(selected, seq, seq-1)
+
+    wx.setStorageSync('selectedSymbols', selected)
+    this.loadData()
+  },
+
+  downSymbol: function (res) {
+    let seq = parseInt(res.currentTarget.dataset.seq)
+    let selected = wx.getStorageSync('selectedSymbols') ? wx.getStorageSync('selectedSymbols') : []
+
+    selected = tools.swapItems(selected, seq, seq + 1)
 
     wx.setStorageSync('selectedSymbols', selected)
     this.loadData()
@@ -143,7 +152,7 @@ Page({
           showList[i].symbolSelected = false
         }
         else {
-          sc.selectCurrency(e.currentTarget.dataset.cid, e.currentTarget.dataset.name, e.currentTarget.dataset.symbol, true, parseInt(e.currentTarget.dataset.seq))
+          sc.selectCurrency(e.currentTarget.dataset.cid, e.currentTarget.dataset.name, e.currentTarget.dataset.symbol, true, e.currentTarget.dataset.seq ? parseInt(e.currentTarget.dataset.seq) : null)
           showList[i].symbolSelected = true
         }
         break
@@ -153,13 +162,6 @@ Page({
     this.setData({
       currenciesToShow: showList
     })
-    // if (this.data.searchPanelShow) {
-    //   this.setData({
-    //     currenciesToShow: showList
-    //   })
-    // }else {
-    //   this.loadData()
-    // }
   },
 
   /**

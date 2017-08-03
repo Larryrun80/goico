@@ -1,46 +1,42 @@
 <!--pages/eos/mcdetail.wxml-->
 <view class="mcd-container">
   <view class="top-area">
-    <view class="currency">
-      <view class="name">{{currency}}</view>
-      <view class="item-star" data-symbol="{{symbol}}" bindtap="selectSymbol">
-        <image class="star" wx:if="{{symbolSelected}}" src="/images/star.png"></image>
-        <image class="star" wx:else src="/images/unstar.png"></image>
-      </view>
-    </view>
-    
+    <view class="name">{{currency}}</view>
     <view class="price">
       <view class="price-cny">{{priceShow}}</view>
       <view class="list-right">
-        <view wx:if="{{trends>=0}}" class="{{trendIncreaseCss}}">+{{trends}}% (24h)</view>
-        <view wx:if="{{trends<0}}" class="{{trendDecreaseCss}}">{{trends}}% (24h)</view>
+        <view wx:if="{{trends>=0}}" class="{{trendIncreaseCss}}">+{{trends}}% {{trendPeriod}}</view>
+        <view wx:if="{{trends<0}}" class="{{trendDecreaseCss}}">{{trends}}% {{trendPeriod}}</view>
       </view>
     </view>
   </view>
-  <view class="item-line"></view>
-  <view class="cmc-area">
+  
+  <view wx:if="{{market == 'cmc'}}" class="cmc-section">
+    <view class="item-line"></view>
+    <view class="cmc-area">
+      <view class="list-item">
+        <view class="list-left">排名</view>
+        <view class="list-right">
+          <view>{{rank}}</view>
+          <view class="see-all" bindtap="seeAll">查看全部</view>
+        </view>
+      </view>
+    </view>
+    <view class="item-line"></view>
     <view class="list-item">
-      <view class="list-left">排名</view>
-      <view class="list-right">
-        <view>{{rank}}</view>
-        <view class="see-all" bindtap="seeAll">查看全部</view>
-      </view>
+      <view class="list-left">市值</view>
+      <view class="list-right">${{marketCap}}</view>
     </view>
-  </view>
-  <view class="item-line"></view>
-  <view class="list-item">
-    <view class="list-left">市值</view>
-    <view class="list-right">${{marketCap}}</view>
-  </view>
-  <view class="item-line"></view>
-  <view class="list-item">
-    <view class="list-left">成交量</view>
-    <view class="list-right">${{volume24h}}</view>
-  </view>
-  <view class="item-line"></view>
-  <view class="list-item">
-    <view class="list-left">流通量</view>
-    <view class="list-right">{{availableSupply}} {{symbol}}</view>
+    <view class="item-line"></view>
+    <view class="list-item">
+      <view class="list-left">成交量</view>
+      <view class="list-right">${{volume24h}}</view>
+    </view>
+    <view class="item-line"></view>
+    <view class="list-item">
+      <view class="list-left">流通量</view>
+      <view class="list-right">{{availableSupply}} {{symbol}}</view>
+    </view>
   </view>
   <!-- <view class="item-line"></view>
   <view class="list-item">
@@ -65,9 +61,30 @@
     </view>
     <view class="item-line"></view>
   </block>
+  <view class="placehold-view"></view>
   <view class="float-share">
     <button id="share-btn" open-type="share" plain="true">
       <image class="share-img" src="/images/share_btn.png"></image>
     </button>
   </view>
+</view>
+<view class="action-bar">
+    <view class="ab-left">
+      <button class="ab-btn" bindtap="goHome" plain="true">
+        <image class="ab-img" src="/images/toolbar_home.png"></image>
+        <view class="ab-label">首页</view>
+      </button>
+    </view>
+    <view class="ab-right">
+      <button wx:if="{{market=='cmc'}}" class="ab-btn" data-cid="{{cid}}" bindtap="selectSymbol" plain="true">
+        <image class="ab-img" wx:if="{{symbolSelected}}" src="/images/star.png"></image>
+        <image class="ab-img" wx:else src="/images/unstar.png"></image>
+        <view class="ab-label" wx:if="{{symbolSelected}}">已加自选</view>
+        <view class="ab-label" wx:else>添加自选</view>
+      </button>
+      <button class="ab-btn" open-type="share" plain="true">
+        <image class="ab-img" src="/images/toolbar_share.png"></image>
+        <view class="ab-label">分享</view>
+      </button>
+    </view>
 </view>

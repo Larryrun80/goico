@@ -3,12 +3,15 @@ var tools = require('../../utils/tools.js')
 var requests = require('../../utils/requests.js')
 var settings = require('../../secret/settings.js')
 var sc = require('../../utils/selectedCurrency.js')
+var app = getApp()
 
 Page({
   /**
    * 页面的初始数据
    */
   data: {
+    market: 'cmc',
+    trendPeriod: '(24h)',
     price: '--',
     trends: 0,
     rank: '--',
@@ -47,12 +50,19 @@ Page({
   },
 
   seeAll: function() {
+    app.globalData.tmpParams = 'cmc_top'
     wx.switchTab({
       url: 'marketcap'
     })
   },
 
-  updateCurrency: function(cid) {
+  goHome: function () {
+    wx.switchTab({
+      url: 'marketcap'
+    })
+  },
+
+  updateCurrency: function(cid, market='cmc') {
     let that = this
     let fiat = wx.getStorageSync('defaultFiatIndex')
     let riseColor = wx.getStorageSync('riseColor')
@@ -62,27 +72,33 @@ Page({
       trendIncreaseCss = 'item-trend-red'
       trendDecreaseCss = 'item-trend-green'
     }
+    let url = settings.requestCurrencyUrl + '?currency_id=' + cid
+    let trendPeriod = '(24h)'
+    if (market != 'cmc') {
+      url = url + '&market=' + market
+      trendPeriod = '(今日)'
+    }
 
     requests.request(
-      settings.requestCurrencyUrl + '?currency_id=' + cid,
+      url,
       function (res) {
         if (res.data.code == 0) {
           let priceCNY = res.data.data.market_cap.price_cny > 0.01 ? tools.friendlyNumber(res.data.data.market_cap.price_cny.toFixed(2)) : res.data.data.market_cap.price_cny
           let priceUSD = res.data.data.market_cap.price_usd > 0.01 ? tools.friendlyNumber(res.data.data.market_cap.price_usd.toFixed(2)) : res.data.data.market_cap.price_usd
           let priceShow = '¥' + priceCNY
 
-          if (fiat && fiat == 1) {
+          if (fiat && fiat == 1 && market=='cmc') {
             priceShow = '$' + priceUSD
           }
           that.setData({
             cid: res.data.data.market_cap.currency_id,
             symbol: res.data.data.market_cap.symbol,
             name: res.data.data.name,
-            currency: res.data.data.name && res.data.data.symbol ? res.data.data.name + " (" + res.data.data.symbol + ")" : '--',
+            currency: res.data.data.name && res.data.data.symbol ? that.getPrefix(market) + res.data.data.name + " (" + res.data.data.symbol + ")" : '--',
             priceCNY: priceCNY,
             priceUSD: priceUSD,
             priceShow: priceShow,
-            trends: res.data.data.market_cap.percent_change_24h ? tools.friendlyNumber(res.data.data.market_cap.percent_change_24h) : '0',
+            trends: res.data.data.market_cap.percent_change_display ? tools.friendlyNumber(res.data.data.market_cap.percent_change_display) : '0',
             rank: res.data.data.market_cap.rank ? res.data.data.market_cap.rank : '--',
             marketCap: res.data.data.market_cap.market_cap_usd ? tools.friendlyNumber(res.data.data.market_cap.market_cap_usd.toFixed(2)) : '--',
             volume24h: res.data.data.market_cap.volume_usd_24h ? tools.friendlyNumber(res.data.data.market_cap.volume_usd_24h.toFixed(2)) : '--',
@@ -95,6 +111,8 @@ Page({
             trendIncreaseCss: trendIncreaseCss,
             trendDecreaseCss: trendDecreaseCss,
             symbolSelected: that.isSelected(res.data.data.market_cap.currency_id, res.data.data.market_cap.symbol),
+            market: market,
+            trendPeriod: trendPeriod,
           }) 
         }
       },
@@ -130,16 +148,24 @@ Page({
     return sc.isSelected(cid, symbol)
   },
 
+  getPrefix: function (market='cmc') {
+    if (market == 'yunbi') {
+      return '云币, '
+    }
+    return ''
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
     // console.log('options: ', options)
+    let that = this
     if (!options.symbol) { this.seeAll(); return }
-    this.updateCurrency(options.cid)
+    this.updateCurrency(options.cid, options.market)
 
     wx.setNavigationBarTitle({
-      title: options.symbol
+      title: that.getPrefix(options.market) + options.symbol
     })
 
     wx.showShareMenu({
@@ -200,8 +226,8 @@ Page({
       console.log(res.target)
     }
     return {
-      title: this.data.name,
-      path: '/pages/eos/mcdetail?symbol=' + this.data.symbol + '&cid=' + this.data.cid,
+      title: this.getPrefix(this.data.market) + this.data.name,
+      path: '/pages/eos/mcdetail?symbol=' + this.data.symbol + '&cid=' + this.data.cid + '&market=' + this.data.market,
       success: function (res) {
         // 转发成功
         wxg.shareComplete(res)

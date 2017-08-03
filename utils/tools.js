@@ -33,7 +33,13 @@ function by(key, sort_direction = "asc") {
   }
 }
 
+function swapItems (arr, index1, index2) {
+  arr[index1] = arr.splice(index2, 1, arr[index1])[0];
+  return arr;
+};
+
 module.exports = {
   friendlyNumber: friendlyNumber,
-  by: by
+  by: by,
+  swapItems: swapItems,
 }

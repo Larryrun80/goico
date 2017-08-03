@@ -1,5 +1,6 @@
 <!--pages/eos/marketcap.wxml-->
 <import src="../template/coin-items/coin-items.wxml" />
+<import src="../template/market-data-items/market-data-items.wxml" />
 <form>
   <view class="toolkit">
     <view class="left-tool">
@@ -20,14 +21,16 @@
             <image wx:else id="sort-img" src="/images/arrow_{{sort}}.png"></image>
           </view>
         </view>
-        <view bindtap="getYunbiData">
+        <view bindtap="goYunbi">
           <label class="tool-label" style="color: {{yunbiColor}}">假装在云币</label>
         </view>
       </view>
 
       <view class='switch-line' wx:else>
         <input class="search-input" value="{{keyword}}" type="text" confirm-type="search" bindconfirm='search' placeholder="输入币名" placeholder-class="placeholder" focus="{{focus}}" bindinput="onBindInput"/>
-        <button id="cancel-btn" wx:if="{{searchPanelShow}}" plain="true" formType="reset" bindtap="onCancelImgTap"><image src="/images/close_btn.png" class="xx-img" ></image></button>
+        <button id="cancel-btn" wx:if="{{searchPanelShow}}" plain="true" formType="reset" bindtap="onCancelImgTap">
+          <image src="/images/close_btn.png" class="xx-img" ></image>
+        </button>
       </view>
     </view>
     <view class="right-tool">
@@ -37,31 +40,19 @@
       </button> 
     </view>
   </view>
-  <!-- <view class="sortfilter">
-    <view class="search">
-        <icon type="search" class="search-img" size="15" color="#405f80"></icon>
-        <input value="{{keyword}}" class="search-input" type="text" confirm-type="done" placeholder="输入币名" placeholder-class="placeholder" bindfocus="onBindFocus" bindinput="onBindInput"/>
-        <button wx:if="{{searchPanelShow}}" plain="true" formType="reset" bindtap="onCancelImgTap"><image src="/images/close_btn.png" class="xx-img" ></image></button>
-    </view>
-    <view class="sort">
-      <view class="sort-container">
-        <view class="split-line"></view>
-        <view bindtap="sortByRank">
-          <label class="sort-label" style="color: {{rankSortColor}}">市值</label>
-        </view>
-        <view class="rate-sort-container" bindtap="sortByRate">
-          <label class="sort-label" style="color: {{rateSortColor}}">涨幅</label>
-          <view class="sort-img-view">
-            <image wx:if="{{ sort != 'rate_asc' && sort != 'rate_desc' }}" id="sort-img" src="/images/arrow_default.png"></image>
-            <image wx:else id="sort-img" src="/images/arrow_{{sort}}.png"></image>
-          </view>
-        </view>
-      </view>
-    </view>
-  </view> -->
 </form>
-<view class="cap-view">
+ <view class="cap-view"> 
+<!-- <scroll-view class="cap-view" scroll-y="true" scroll-top="{{scrollTop}}"   bindscroll="scroll"> -->
+<!-- <view class="placeholder-view"></view>  -->
   <block wx:for="{{symbolsToShow}}" wx:for-item="symbol" wx:key="item">
-    <template is="coinItems" data="{{...symbol}}"></template>
+    <template wx:if="{{scope=='markets' && market!='cmc'}}" is="marketDataItems" data="{{...symbol}}"></template>
+    <template wx:else is="coinItems" data="{{...symbol}}"></template>
   </block>
-</view>
+
+  <view wx:if="{{scope == 'selected'}}" bindtap="goAddSelected" class="add-select-btn">
+    <view>添加自选行情</view>
+     <image class="detail" src="/images/detail_small.png"></image> 
+     <view class="add-selected-bottom"></view>
+  </view>
+<!-- </scroll-view> -->
+</view> 

@@ -197,17 +197,17 @@ Page({
     let settings = this.loadDefaultSettings()
     this.setData(settings)
 
-    if (app.globalData.tmpParams.settingsAction == 'add selected') {
-      app.globalData.tmpParams.settingsAction = ''
-      setTimeout(
-        function () {
-          wx.navigateTo({
-            url: '/pages/me/selected',
-          })
-        },
-        500
-      )
-    }
+    // if (app.globalData.tmpParams && app.globalData.tmpParams == 'add_selected') {
+    //   app.globalData.tmpParams = ''
+    //   setTimeout(
+    //     function () {
+    //       wx.navigateTo({
+    //         url: '/pages/me/selected',
+    //       })
+    //     },
+    //     500
+    //   )
+    // }
   },
 
   /**

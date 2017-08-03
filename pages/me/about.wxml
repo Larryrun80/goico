@@ -3,15 +3,15 @@
   <view class="info">
     <image id="logo" src="/images/mt_logo.png"></image>
     <view class="brand">MyToken</view>
-    <view class="version">小程序版本号 v0.3.3</view>
-    <view class="date">发布时间: 2017-08-01</view>
+    <view class="version">小程序版本号 v0.3.5</view>
+    <view class="date">发布时间: 2017-08-03</view>
   </view>
   <view class="updates">
     <view class="title">更新内容</view>
-    <view class="content">修复自选bug</view>
-    <view class="content">搜索功能优化</view>
-    <view class="content">自选功能优化</view>
-    <view class="content">分享优化</view>
-    <view class="content">长按复制加群微信</view>
+    <view class="content">“假装在云币”</view>
+    <view class="content">币详情底部导航</view>
+    <view class="content">自选排序优化</view>
+    <view class="content">自选引导优化</view>
+    <view class="content">小屏手机适配</view>
   </view>
 </view>

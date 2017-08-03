@@ -114,6 +114,7 @@ function getRemoteUrl () {
 
 // addSelect boolean, true 代表添加， false代表取消
 function selectCurrency(cid, name, symbol, addSelect, pos=null) {
+  console.log(pos)
   let [selected, useIDs] = loadSelectedData()
   // console.log('[selectedCurrency] -selectCurrency- selected: ', selected)
   if (!addSelect) { // 如果是取消
@@ -149,7 +150,7 @@ function selectCurrency(cid, name, symbol, addSelect, pos=null) {
       return
     }
     else {
-      if (isNaN(pos)) {
+      if (pos == null) {
         selected.push({
           currency_id: cid,
           currency: name + ' (' + symbol + ')',
