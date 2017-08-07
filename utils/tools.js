@@ -4,6 +4,14 @@ function friendlyNumber(num) {
   return parts.join(".");
 }
 
+function number10k(num) {
+  var parts = num.toString().split(".");
+  if (parseInt(parts[0]) >= 10000) {
+    return (parts[0]/10000).toFixed(2) + '万'
+  }
+  return num;
+}
+
 // by函数接受一个对象的key和排序方式（asc, desc）做为参数
 // 并返回一个可以用来包含该成员的对象数组进行排序的比较函数
 // 使用： xxxx.sort(by('age', 'desc'));
@@ -40,6 +48,7 @@ function swapItems (arr, index1, index2) {
 
 module.exports = {
   friendlyNumber: friendlyNumber,
+  number10k: number10k,
   by: by,
   swapItems: swapItems,
 }

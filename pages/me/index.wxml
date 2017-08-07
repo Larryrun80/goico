@@ -1,7 +1,7 @@
 <!--pages/me/index.wxml-->
 <view class="me-container">
     <view class="user-info">
-        <image class="user-avatar" src="{{userInfo.avatarUrl}}" bindlongtap="userLogin"></image> 
+        <image class="user-avatar" src="{{userInfo.avatarUrl}}" bindlongtap="clearStorage"></image> 
         <text class="username">{{userInfo.nickName}}</text> 
     </view>
     <view class="v-sep"></view>
@@ -55,7 +55,7 @@
     <view class="item-line"></view>
     <view class="cell"  bindtap="aboutUs">
       <view class="left-cell">关于我们</view>
-      <view class="right-cell">v0.3.5
+      <view class="right-cell">v0.3.6
         <image class="detail" src="/images/detail_btn.png"></image>
       </view>
     </view>

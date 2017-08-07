@@ -83,18 +83,42 @@ Page({
       url,
       function (res) {
         if (res.data.code == 0) {
-          let priceCNY = res.data.data.market_cap.price_cny > 0.01 ? tools.friendlyNumber(res.data.data.market_cap.price_cny.toFixed(2)) : res.data.data.market_cap.price_cny
-          let priceUSD = res.data.data.market_cap.price_usd > 0.01 ? tools.friendlyNumber(res.data.data.market_cap.price_usd.toFixed(2)) : res.data.data.market_cap.price_usd
+          console.log(res)
+          let priceCNY = '--'
+          if (res.data.data.market_cap.price_cny) {
+            priceCNY = res.data.data.market_cap.price_cny > 1 ? tools.friendlyNumber(res.data.data.market_cap.price_cny.toFixed(2)) : res.data.data.market_cap.price_cny
+          }
+          let priceUSD = res.data.data.market_cap.price_usd > 1 ? tools.friendlyNumber(res.data.data.market_cap.price_usd.toFixed(2)) : res.data.data.market_cap.price_usd
           let priceShow = '¥' + priceCNY
 
           if (fiat && fiat == 1 && market=='cmc') {
             priceShow = '$' + priceUSD
           }
+
+          let currency = res.data.data.name && res.data.data.symbol ? res.data.data.name + " (" + res.data.data.symbol + ")" : '--'
+          let showname = res.data.data.alias ? that.getPrefix(market) + res.data.data.alias + ', ' + currency : that.getPrefix(market) + currency
+          let markets = res.data.data.markets ? res.data.data.markets : []
+          let langUrls = {
+            CHN: '/images/flags/flag_china.png',
+            JPN: '/images/flags/flag_jpan.png',
+            KOR: '/images/flags/flag_korea.png',
+            ENG: '/images/flags/flag_usa.png', 
+          }
+
+          for (let i in markets) {
+            markets[i].language = markets[i].language ? markets[i].language : 'ENG'
+            markets[i].langUrl = langUrls[markets[i].language]
+            markets[i].volume = markets[i].volume_24h ? '$' + tools.friendlyNumber(markets[i].volume_24h) : '暂无数据'
+            markets[i].showname = markets[i].alias ? markets[i].alias + ', ' + markets[i].name : markets[i].name
+          }
+
           that.setData({
             cid: res.data.data.market_cap.currency_id,
             symbol: res.data.data.market_cap.symbol,
             name: res.data.data.name,
-            currency: res.data.data.name && res.data.data.symbol ? that.getPrefix(market) + res.data.data.name + " (" + res.data.data.symbol + ")" : '--',
+            alias: res.data.data.alias,
+            showname: showname,
+            currency: currency,
             priceCNY: priceCNY,
             priceUSD: priceUSD,
             priceShow: priceShow,
@@ -107,7 +131,7 @@ Page({
               'website': res.data.data.website ? res.data.data.website : '暂无',
               'explorer': res.data.data.explorer ? res.data.data.explorer : '暂无',
             } ,
-            markets: res.data.data.markets ? res.data.data.markets : [],
+            markets: markets,
             trendIncreaseCss: trendIncreaseCss,
             trendDecreaseCss: trendDecreaseCss,
             symbolSelected: that.isSelected(res.data.data.market_cap.currency_id, res.data.data.market_cap.symbol),
@@ -168,9 +192,11 @@ Page({
       title: that.getPrefix(options.market) + options.symbol
     })
 
-    wx.showShareMenu({
-      withShareTicket: true
-    })
+    if (wx.showShareMenu) {
+      wx.showShareMenu({
+        withShareTicket: true
+      })
+    }
   },
 
   /**
@@ -205,7 +231,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    this.updateCurrency(this.data.symbol)
+    this.updateCurrency(this.data.cid, this.data.market)
     wx.hideNavigationBarLoading()
     wx.stopPullDownRefresh()
   },
@@ -230,7 +256,7 @@ Page({
       path: '/pages/eos/mcdetail?symbol=' + this.data.symbol + '&cid=' + this.data.cid + '&market=' + this.data.market,
       success: function (res) {
         // 转发成功
-        wxg.shareComplete(res)
+        // wxg.shareComplete(res)
       },
       fail: function (res) {
         // 转发失败

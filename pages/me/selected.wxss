@@ -74,7 +74,7 @@
 
 .item-name {
   font-size: 26rpx;
-  color: #000;
+  color: #888;
   line-height: 37rpx;
 }
 

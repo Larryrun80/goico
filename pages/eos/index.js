@@ -10,7 +10,6 @@ Page({
    * 页面的初始数据
    */
   data: {
-    canUseCoverView: wx.canIUse('cover-view'),
     userInfo: {},
     showed: false,
     eosPrice: "--",

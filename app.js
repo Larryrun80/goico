@@ -55,7 +55,8 @@ App({
         }
 
         for (let item in initData) {
-          if (!(res.keys.includes(item))) {
+          // if (!(res.keys.includes(item))) {
+          if (-1 === res.keys.indexOf(item)) {
             console.log('init ', item)
             wx.setStorage({
               key: item,

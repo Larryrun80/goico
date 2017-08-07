@@ -140,7 +140,8 @@ Page({
     let res = wx.getStorageInfoSync()
 
     for (let item in settings) {
-      if ((res.keys.includes(item))) {
+      // if ((res.keys.includes(item))) {
+      if (res.keys.indexOf(item) > -1) {
         console.log('load value from storage ', item)
         settings[item] = wx.getStorageSync(item)
       }

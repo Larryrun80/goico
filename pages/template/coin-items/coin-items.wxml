@@ -2,7 +2,7 @@
   <view class="coin-item" data-cid="{{cid}}" data-symbol="{{symbol}}" bindtap="redirectToDetail">
     <view class="coin-info">
       <view class="item-left">
-        <view class="item-rank">#{{rank}}, {{name}}</view>
+        <view class="item-rank">#{{rank}}, {{showname}}</view>
         <view class="item-name">{{symbol}}</view>
         <view class="item-cap">${{marketcap}}</view>
       </view>

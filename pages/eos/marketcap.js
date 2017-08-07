@@ -185,10 +185,10 @@ Page({
             let priceUSD = null
             let priceShow = null
             if (mcListRaw[i].price_cny) {
-              priceCNY = mcListRaw[i].price_cny >= 0.01 ? tools.friendlyNumber(mcListRaw[i].price_cny.toFixed(2)) : mcListRaw[i].price_cny
+              priceCNY = mcListRaw[i].price_cny >= 1 ? tools.friendlyNumber(mcListRaw[i].price_cny.toFixed(2)) : mcListRaw[i].price_cny
             }
             if (mcListRaw[i].price_usd) {
-              priceUSD = mcListRaw[i].price_usd >= 0.01 ? tools.friendlyNumber(mcListRaw[i].price_usd.toFixed(2)) : mcListRaw[i].price_usd
+              priceUSD = mcListRaw[i].price_usd >= 1 ? tools.friendlyNumber(mcListRaw[i].price_usd.toFixed(2)) : mcListRaw[i].price_usd
             }
             if (priceCNY !== null && !(fiat && fiat == 1 && priceUSD)) {
               priceShow = '¥' + priceCNY
@@ -206,16 +206,19 @@ Page({
             else{
               percentChange = 0
             }
-
+            // console.log(mcList)
             mcList.push({
               cid: mcListRaw[i].currency_id,
               name: mcListRaw[i].name,
               symbol: mcListRaw[i].symbol,
+              alias: mcListRaw[i].alias,
+              showname: mcListRaw[i].alias ? mcListRaw[i].alias : mcListRaw[i].name,
               rank: mcListRaw[i].rank ? mcListRaw[i].rank : '--',
               priceShow: priceShow,
               priceCNY: priceCNY,
               priceUSD: priceUSD,
               marketcap: mcListRaw[i].market_cap_usd ? tools.friendlyNumber(mcListRaw[i].market_cap_usd) : '--',
+              volume_24h: mcListRaw[i].volume_24h ? tools.number10k(mcListRaw[i].volume_24h) : '暂无数据',
               percentChange: percentChange,
               trendIncreaseCss: trendIncreaseCss,
               trendDecreaseCss: trendDecreaseCss,
@@ -254,7 +257,7 @@ Page({
     settings.market = market
     settings.keyword = this.data.keyword
     let symbolsToShow = this.getSymbolsToShow(settings.keyword, originData)
-
+    // console.log('symbolstoshow, ', symbolsToShow)
     if (scope == 'markets') {
       if (market == 'cmc') {
         // sort
@@ -318,6 +321,7 @@ Page({
  
     settings.symbols = originData
     settings.symbolsToShow = symbolsToShow
+    settings.searchPanelShow = settings.keyword ? settings.searchPanelShow : false
     this.setData(
       settings
     )
@@ -330,7 +334,7 @@ Page({
         sort: settings.sort,
       },
     })
-    console.log(settings)
+    // console.log(settings)
   },
 
   sortByRate: function () {
@@ -400,7 +404,7 @@ Page({
 
     // this.updateMarketcap('top', keyword, sort)
     // let selectedScope = (scope == 'selected') ? true : false
-    let searchPanelShow = (scope == 'filter') ? true : false
+    let searchPanelShow = (keyword == '') ? false : true
     console.log(keyword, sort, scope, searchPanelShow)
     this.setData({
       keyword: keyword,
@@ -411,9 +415,12 @@ Page({
       focus: false,
     })
   
-    wx.showShareMenu({
-      withShareTicket: true
-    })
+
+    if (wx.showShareMenu) {
+      wx.showShareMenu({
+        withShareTicket: true
+      })
+    }
   },
 
   /**
@@ -487,7 +494,7 @@ Page({
       path: '/pages/eos/marketcap?keyword=' + this.data.keyword + '&sort=' + this.data.sort + '&market=' + this.data.market,
       success: function (res) {
         // 转发成功
-        wxg.shareComplete(res)
+        // wxg.shareComplete(res)
       },
       fail: function (res) {
         // 转发失败

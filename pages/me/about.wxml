@@ -3,15 +3,15 @@
   <view class="info">
     <image id="logo" src="/images/mt_logo.png"></image>
     <view class="brand">MyToken</view>
-    <view class="version">小程序版本号 v0.3.5</view>
-    <view class="date">发布时间: 2017-08-03</view>
+    <view class="version">小程序版本号 v0.3.6</view>
+    <view class="date">发布时间: 2017-08-07</view>
   </view>
   <view class="updates">
     <view class="title">更新内容</view>
-    <view class="content">“假装在云币”</view>
-    <view class="content">币详情底部导航</view>
-    <view class="content">自选排序优化</view>
-    <view class="content">自选引导优化</view>
-    <view class="content">小屏手机适配</view>
+    <view class="content">优化币详情.交易市场</view>
+    <view class="content">币和交易所中文名显示</view>
+    <view class="content">修复币详情刷新问题</view>
+    <view class="content">手机／微信低版本兼容</view>
+    <view class="content">部分界面优化和bug修复</view>
   </view>
 </view>
