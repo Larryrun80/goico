@@ -61,7 +61,7 @@ function request (url, success, fail, complete) {
     },
     success: function (res) {
       if (typeof(success) == "function") {
-        // console.log(res.data)
+        // console.log(res)
         success(res)
       }
     },

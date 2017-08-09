@@ -54,9 +54,18 @@
     </view>
     <view class="item-line"></view>
     <view class="cell"  bindtap="aboutUs">
-      <view class="left-cell">关于我们</view>
+      <view class="left-cell">关于MyToken</view>
       <view class="right-cell">v0.3.6
         <image class="detail" src="/images/detail_btn.png"></image>
+      </view>
+    </view>
+    <view class="item-line"></view>
+    <view class="cell">
+      <view class="left-cell">呼叫小月</view>
+      <view class="right-cell">
+        <contact-button type="default-light" size="20" session-from="weapp">
+          <icon type="info" size="20"/>
+        </contact-button>
       </view>
     </view>
 

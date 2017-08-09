@@ -11,6 +11,8 @@ function shareComplete(res) {
   })
 }
 
+// 一个currency是否被选中
+// 返回一个bool值， true代表在自选中
 function isSelected(cid, symbol) {
   let useIDs = true
   let selected = wx.getStorageSync('selectedCurrencies')
@@ -25,11 +27,11 @@ function isSelected(cid, symbol) {
       selectedIDs.push(selected[i].currenc_id)
     }
 
-    if (selectedIDs && electedIDs.includes(cid)) {
+    if (selectedIDs && selectedIDs.includes(cid)) {
       return true
     }
   }
-  else {
+  else { // 如果是老版本
     let selectedSymbols = []
     let selectedIDs = []
     
@@ -53,6 +55,7 @@ function isSelected(cid, symbol) {
   return false
 }
 
+// 返回一个array， array[0] 是自选货币列表， array[1]是是否是带id版本
 function loadSelectedData () {
   let useIDs = true
   let currencies = []
@@ -76,14 +79,16 @@ function loadSelectedData () {
     }
   }
 
+  console.log('selected_currencies: ', currencies)
   return [currencies, useIDs]
 }
 
+// 获取自选currency的远程url
 function getRemoteUrl () {
   let [selectedData, useIDs] = loadSelectedData()
 
   let url = settings.requestMarketListUrl
-  if (selectedData) {
+  if (selectedData.length > 0) {
     // 生成请求查询串
     if (useIDs) {
       let ids = []
