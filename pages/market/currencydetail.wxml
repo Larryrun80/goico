@@ -73,26 +73,26 @@
   <view class="placehold-view"></view>
   <view class="float-share">
     <button id="share-btn" open-type="share" plain="true">
-      <image class="share-img" src="/images/share_btn.png"></image>
+      <image class="share-img" src="/images/buttons/share_btn.png"></image>
     </button>
   </view>
 </view>
 <view class="action-bar">
     <view class="ab-left">
       <button class="ab-btn" bindtap="goHome" plain="true">
-        <image class="ab-img" src="/images/toolbar_home.png"></image>
+        <image class="ab-img" src="/images/buttons/toolbar_home.png"></image>
         <view class="ab-label">首页</view>
       </button>
     </view>
     <view class="ab-right">
       <button wx:if="{{market=='cmc'}}" class="ab-btn" data-cid="{{cid}}" bindtap="selectSymbol" plain="true">
-        <image class="ab-img" wx:if="{{symbolSelected}}" src="/images/star.png"></image>
-        <image class="ab-img" wx:else src="/images/unstar.png"></image>
+        <image class="ab-img" wx:if="{{symbolSelected}}" src="/images/buttons/star.png"></image>
+        <image class="ab-img" wx:else src="/images/buttons/unstar.png"></image>
         <view class="ab-label" wx:if="{{symbolSelected}}">已加自选</view>
         <view class="ab-label" wx:else>添加自选</view>
       </button>
       <button class="ab-btn" open-type="share" plain="true">
-        <image class="ab-img" src="/images/toolbar_share.png"></image>
+        <image class="ab-img" src="/images/buttons/toolbar_share.png"></image>
         <view class="ab-label">分享</view>
       </button>
     </view>

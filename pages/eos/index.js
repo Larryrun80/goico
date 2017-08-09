@@ -115,7 +115,7 @@ Page({
 
   goMarketCap: function () {
     wx.switchTab({
-      url: 'marketcap'
+      url: '/pages/market/marketcap'
     })
   },
 

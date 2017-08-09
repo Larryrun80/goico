@@ -8,7 +8,7 @@
     <view class="cell" bindtap="goSelected">
       <view class="left-cell">币行情自选</view>
       <view class="right-cell">
-        <image class="detail" src="/images/detail_btn.png"></image>
+        <image class="detail" src="/images/icons/detail.png"></image>
       </view>
     </view>
 
@@ -19,7 +19,7 @@
           <picker class='picker-view' bindchange="setSymbolCnt" value="{{symbolCntIndex}}" range="{{symbolCnt}}">
             <view class="picker">
               {{symbolCnt[symbolCntIndex]}}
-              <image class="detail" src="/images/detail_btn.png"></image>
+              <image class="detail" src="/images/icons/detail.png"></image>
             </view>
           </picker>
         </view>
@@ -33,7 +33,7 @@
           <picker class='picker-view' bindchange="setFiat" value="{{defaultFiatIndex}}" range="{{fiatList}}">
             <view class="picker">
               {{fiatList[defaultFiatIndex]}}
-              <image class="detail" src="/images/detail_btn.png"></image>
+              <image class="detail" src="/images/icons/detail.png"></image>
             </view>
           </picker>
         </view>
@@ -49,14 +49,14 @@
     <view class="cell" bindtap="addWechat">
       <view class="left-cell">加微信群</view>
       <view class="right-cell">
-        <image class="detail" src="/images/detail_btn.png"></image>
+        <image class="detail" src="/images/icons/detail.png"></image>
       </view>
     </view>
     <view class="item-line"></view>
     <view class="cell"  bindtap="aboutUs">
       <view class="left-cell">关于MyToken</view>
       <view class="right-cell">v0.3.6
-        <image class="detail" src="/images/detail_btn.png"></image>
+        <image class="detail" src="/images/icons/detail.png"></image>
       </view>
     </view>
     <view class="item-line"></view>

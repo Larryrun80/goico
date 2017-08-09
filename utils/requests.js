@@ -46,7 +46,7 @@ function request (url, success, fail, complete) {
           title: '未检测到网络连接，请检查您的网络设置',
           duration: 1500,
           mask: true,
-          image: "/images/exclamationmark.png",
+          image: "/images/icons/exclamationmark.png",
         })
         return false
       }

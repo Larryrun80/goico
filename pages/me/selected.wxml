@@ -4,7 +4,7 @@
     <view class="filter">
       <icon type="search" class="search-img" size="15" color="#405f80"></icon>
       <input value="{{keyword}}" class="search-input" type="text" confirm-type="search" bindconfirm='search' placeholder="输入币名添加自选" placeholder-class="placeholder" bindinput="onBindInput" bindfocus="onBindFocus" />
-      <button id="cancel-btn" wx:if="{{searchPanelShow}}" plain="true" formType="reset" bindtap="onCancelImgTap"><image src="/images/close_btn.png" class="xx-img" ></image></button>
+      <button id="cancel-btn" wx:if="{{searchPanelShow}}" plain="true" formType="reset" bindtap="onCancelImgTap"><image src="/images/buttons/close_btn.png" class="xx-img" ></image></button>
     </view>
   </form>
   <view class="currencies">
@@ -16,13 +16,13 @@
         </view>
         
         <view class="item-right">
-          <image wx:if="{{item.symbolSelected && item.seq>0}}" class='stick' data-seq="{{item.seq}}" src="/images/move_up.png" bindtap="upSymbol"></image>
-          <image wx:if="{{item.symbolSelected && item.seq==0}}" class='stick' data-seq="{{item.seq}}" src="/images/move_up_disable.png"></image>
-          <image wx:if="{{item.symbolSelected && item.seq<currenciesToShow.length-1}}" class='stick' data-seq="{{item.seq}}" src="/images/move_down.png" bindtap="downSymbol"></image>
-          <image wx:if="{{item.symbolSelected && item.seq==currenciesToShow.length-1}}" class='stick' data-seq="{{item.seq}}" src="/images/move_down_disable.png"></image>
+          <image wx:if="{{item.symbolSelected && item.seq>0}}" class='stick' data-seq="{{item.seq}}" src="/images/buttons/move_up.png" bindtap="upSymbol"></image>
+          <image wx:if="{{item.symbolSelected && item.seq==0}}" class='stick' data-seq="{{item.seq}}" src="/images/buttons/move_up_disable.png"></image>
+          <image wx:if="{{item.symbolSelected && item.seq<currenciesToShow.length-1}}" class='stick' data-seq="{{item.seq}}" src="/images/buttons/move_down.png" bindtap="downSymbol"></image>
+          <image wx:if="{{item.symbolSelected && item.seq==currenciesToShow.length-1}}" class='stick' data-seq="{{item.seq}}" src="/images/buttons/move_down_disable.png"></image>
           <view class="item-star" data-symbol="{{item.symbol}}" data-seq="{{item.seq}}" data-name="{{item.name}}" data-cid="{{item.currency_id}}" bindtap="selectCurrency">
-            <image class="star" wx:if="{{item.symbolSelected}}" src="/images/star.png"></image>
-            <image class="star" wx:else src="/images/unstar.png"></image>
+            <image class="star" wx:if="{{item.symbolSelected}}" src="/images/buttons/star.png"></image>
+            <image class="star" wx:else src="/images/buttons/unstar.png"></image>
           </view>
         </view>
       </view>

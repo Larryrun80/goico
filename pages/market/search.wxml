@@ -8,7 +8,7 @@
         <icon type="search" class="search-img" size="15" color="#405f80"></icon>
         <input value="{{keyword}}" class="search-input" type="text" confirm-type="search" bindconfirm='search' placeholder="输入币名添加自选" placeholder-class="placeholder" bindinput="onBindInput" bindfocus="onBindFocus" />
         <button id="cancel-btn" wx:if="{{searchPanelShow}}" plain="true" formType="reset" bindtap="onCancelImgTap">
-          <image src="/images/close_btn.png" class="xx-img" ></image>
+          <image src="/images/buttons/close_btn.png" class="xx-img" ></image>
         </button>
       </view>
       <view id="search-btn">搜索</view>

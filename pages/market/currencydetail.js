@@ -144,7 +144,7 @@ Page({
         wx.showToast({
           title: '获取数据失败，请稍候再试...',
           duration: 1500,
-          image: '/images/exclamationmark.png'
+          image: '/images/icons/exclamationmark.png'
         })
       }
     )

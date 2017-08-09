@@ -1,7 +1,7 @@
 <!--pages/eos/index.wxml-->
 <view class="eos-container">
   <view class="page1">
-    <image class='eos-logo' src="/images/eos-logo.png" bindtap="getRequsetParams"></image>
+    <image class='eos-logo' src="/images/logos/eos-logo.png" bindtap="getRequsetParams"></image>
     <text class="eos-title">当前周期至{{periodEndTime}} \n EOS 价格预测</text>
     <text class="eos-text-large">{{eosPrice}} ETH</text>
     <text class="eos-text-normal">≈ {{eosPriceCNY}} CNY</text>
@@ -29,7 +29,7 @@
     <text class="eos-title">EOS 官网</text>
     <text class="eos-text" selectable="true">https://eos.io</text>
     <text class="eos-title">购买渠道</text>
-    <image id="logs-img" src="/images/logos.png"></image>
+    <image id="logs-img" src="/images/logos/logos.png"></image>
     <!-- <text class="eos-title" selectable="true">加群请先加微信: voicecho</text>
     <!--<text class="eos-text" selectable="true">voicecho</text>-->
     <!-- <image id="qr-img" src="/images/wechat_qr.jpg"></image> -->
@@ -37,7 +37,7 @@
   </view>
   <view class="float-share">
     <button id="share-btn" open-type="share" plain="true">
-      <image class="share-img" src="/images/share_btn.png"></image>
+      <image class="share-img" src="/images/buttons/share_btn.png"></image>
     </button>
   </view>
 </view>

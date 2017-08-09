@@ -29,20 +29,20 @@
       "list": [{
         "pagePath": "pages/market/marketcap",
         "text": "币行情",
-        "iconPath": "/images/trend_tab.png",
-        "selectedIconPath": "/images/trend_tab_selected.png"
+        "iconPath": "/images/tabs/trend_tab.png",
+        "selectedIconPath": "/images/tabs/trend_tab_selected.png"
       },
       {
         "pagePath": "pages/eos/index",
         "text": "EOS知道",
-        "iconPath": "/images/eos_tab.png",
-        "selectedIconPath": "/images/eos_tab_selected.png"
+        "iconPath": "/images/tabs/eos_tab.png",
+        "selectedIconPath": "/images/tabs/eos_tab_selected.png"
       },
       {
         "pagePath": "pages/me/index",
         "text": "我的",
-        "iconPath": "/images/me_tab.png",
-        "selectedIconPath": "/images/me_tab_selected.png"
+        "iconPath": "/images/tabs/me_tab.png",
+        "selectedIconPath": "/images/tabs/me_tab_selected.png"
       }]
   }
 }

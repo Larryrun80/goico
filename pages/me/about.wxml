@@ -1,7 +1,7 @@
 <!--pages/me/about.wxml-->
 <view class="container">
   <view class="info">
-    <image id="logo" src="/images/mt_logo.png"></image>
+    <image id="logo" src="/images/logos/mt_logo.png"></image>
     <view class="brand">MyToken</view>
     <view class="version">小程序版本号 v0.3.6</view>
     <view class="date">发布时间: 2017-08-07</view>

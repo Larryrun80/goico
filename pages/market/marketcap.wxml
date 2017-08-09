@@ -17,8 +17,8 @@
         <view class="rate-sort-container" bindtap="sortByRate">
           <label class="tool-label" maxlength="20" style="color: {{rateSortColor}}">涨幅</label>
           <view class="sort-img-view">
-            <image wx:if="{{ sort != 'rate_asc' && sort != 'rate_desc' }}" id="sort-img" src="/images/arrow_default.png"></image>
-            <image wx:else id="sort-img" src="/images/arrow_{{sort}}.png"></image>
+            <image wx:if="{{ sort != 'rate_asc' && sort != 'rate_desc' }}" id="sort-img" src="/images/icons/arrow_default.png"></image>
+            <image wx:else id="sort-img" src="/images/icons/arrow_{{sort}}.png"></image>
           </view>
         </view>
         <view bindtap="goYunbi">
@@ -29,14 +29,14 @@
       <view class='switch-line' wx:else>
         <input class="search-input" value="{{keyword}}" type="text" confirm-type="search" bindconfirm='search' placeholder="输入币名" placeholder-class="placeholder" focus="{{focus}}" bindinput="onBindInput"/>
         <button id="cancel-btn" wx:if="{{searchPanelShow}}" plain="true" formType="reset" bindtap="onCancelImgTap">
-          <image src="/images/close_btn.png" class="xx-img" ></image>
+          <image src="/images/buttons/close_btn.png" class="xx-img" ></image>
         </button>
       </view>
     </view>
     <view class="right-tool">
       <view class="veritcal-seperate"></view>
        <button id="share-btn" open-type="share" plain="true">
-        <image class="share-img" src="/images/share_btn_small.png"></image>
+        <image class="share-img" src="/images/buttons/share_btn_small.png"></image>
       </button> 
     </view>
   </view>
@@ -51,7 +51,7 @@
 
   <view wx:if="{{scope == 'selected'}}" bindtap="goAddSelected" class="add-select-btn">
     <view>添加自选行情</view>
-     <image class="detail" src="/images/detail_small.png"></image> 
+     <image class="detail" src="/images/icons/detail_small.png"></image> 
      <view class="add-selected-bottom"></view>
   </view>
 <!-- </scroll-view> -->
