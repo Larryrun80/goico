@@ -1,4 +1,4 @@
-// pages/me/selected.js
+  // pages/me/selected.js
 var tools = require('../../utils/tools.js')
 var requests = require('../../utils/requests.js')
 var settings = require('../../secret/settings.js')
@@ -35,7 +35,7 @@ Page({
   redirectToDetail: function (res) {
     let symbol = res.currentTarget.dataset.symbol
     wx.navigateTo({
-      url: '/pages/eos/mcdetail?symbol=' + symbol
+      url: '/pages/market/currencydetail?symbol=' + symbol
     })
   },
 

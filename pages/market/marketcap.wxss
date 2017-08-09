@@ -1,4 +1,4 @@
-/* pages/eos/marketcap.wxss */
+/* pages/market/marketcap.wxss */
 @import "../template/coin-items/coin-items.wxss";
 
 .split-line {

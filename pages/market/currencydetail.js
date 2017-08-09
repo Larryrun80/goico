@@ -1,4 +1,4 @@
-// pages/eos/mcdetail.js
+// pages/market/currencydetail.js
 var tools = require('../../utils/tools.js')
 var requests = require('../../utils/requests.js')
 var settings = require('../../secret/settings.js')
@@ -253,7 +253,7 @@ Page({
     }
     return {
       title: this.getPrefix(this.data.market) + this.data.name,
-      path: '/pages/eos/mcdetail?symbol=' + this.data.symbol + '&cid=' + this.data.cid + '&market=' + this.data.market,
+      path: '/pages/market/currencydetail?symbol=' + this.data.symbol + '&cid=' + this.data.cid + '&market=' + this.data.market,
       success: function (res) {
         // 转发成功
         // wxg.shareComplete(res)

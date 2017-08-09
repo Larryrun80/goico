@@ -1,4 +1,4 @@
-<!--pages/eos/mcdetail.wxml-->
+<!--pages/market/currencydetail.wxml-->
 <view class="mcd-container">
   <view class="top-area">
     <view class="name">{{showname}}</view>

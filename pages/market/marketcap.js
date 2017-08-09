@@ -1,4 +1,4 @@
-// pages/eos/marketcap.js
+// pages/market/marketcap.js
 var tools = require('../../utils/tools.js')
 var requests = require('../../utils/requests.js')
 var settings = require('../../secret/settings.js')
@@ -76,7 +76,7 @@ Page({
     let cid = res.currentTarget.dataset.cid
     let symbol = res.currentTarget.dataset.symbol
     wx.navigateTo({
-      url: 'mcdetail?symbol=' + symbol + '&cid=' +cid
+      url: 'currencydetail?symbol=' + symbol + '&cid=' +cid
     })
   },
 
@@ -85,7 +85,7 @@ Page({
     let symbol = res.currentTarget.dataset.symbol
     let market = 'yunbi'
     wx.navigateTo({
-      url: 'mcdetail?symbol=' + symbol + '&cid=' + cid + '&market=' + market
+      url: 'currencydetail?symbol=' + symbol + '&cid=' + cid + '&market=' + market
     })
   },
 
@@ -488,7 +488,7 @@ Page({
     }
     return {
       title: '币行情',
-      path: '/pages/eos/marketcap?keyword=' + this.data.keyword + '&sort=' + this.data.sort + '&market=' + this.data.market,
+      path: '/pages/market/marketcap?keyword=' + this.data.keyword + '&sort=' + this.data.sort + '&market=' + this.data.market,
       success: function (res) {
         // 转发成功
         // wxg.shareComplete(res)

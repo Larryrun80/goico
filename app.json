@@ -1,14 +1,18 @@
 {
   "pages":[
-    "pages/eos/marketcap",
-    "pages/me/index",
+    
+    "pages/market/marketcap",
+    "pages/market/currencydetail",
+    "pages/market/search",
+
     "pages/eos/index",
-    "pages/eos/mcdetail",
-    "pages/test/test",
-    "pages/logs/logs",
+
+    "pages/me/index",
     "pages/me/wechat",
     "pages/me/about",
-    "pages/me/selected"
+    "pages/me/selected",
+
+    "pages/logs/logs"
   ],
   "window":{
 
@@ -23,7 +27,7 @@
       "color": "#999",
       "selectedColor": "#2196F3",
       "list": [{
-        "pagePath": "pages/eos/marketcap",
+        "pagePath": "pages/market/marketcap",
         "text": "币行情",
         "iconPath": "/images/trend_tab.png",
         "selectedIconPath": "/images/trend_tab_selected.png"

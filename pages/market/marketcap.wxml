@@ -1,4 +1,4 @@
-<!--pages/eos/marketcap.wxml-->
+<!--pages/market/marketcap.wxml-->
 <import src="../template/coin-items/coin-items.wxml" />
 <import src="../template/market-data-items/market-data-items.wxml" />
 <form>

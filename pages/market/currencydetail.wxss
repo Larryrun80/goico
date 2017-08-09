@@ -1,4 +1,4 @@
-/* pages/eos/mcdetail.wxss */
+/* pages/market/currencydetail.wxss */
 page {
   background-color:#eee;
 }
