@@ -1,4 +1,8 @@
 //app.js
+var network = require('/utils/network.js')
+var settings = require('/secret/settings.js')
+var fav = require('/utils/favorite.js')
+
 App({
   onLaunch: function() {
     //调用API从本地缓存中获取数据
@@ -7,14 +11,11 @@ App({
     // wx.setStorageSync('logs', logs)
 
     this.initData()
+    this.initFavorite()
   },
 
   onHide: function() {
-    // console.log(this.globalData)
-    // for (let key of Object.keys(this.globalData.closeSettings)) {
-    //   console.log(key, this.globalData.closeSettings[key])
-    //   wx.setStorageSync(key, this.globalData.closeSettings[key])
-    // }
+
   },
 
   getUserInfo: function(cb) {
@@ -35,7 +36,32 @@ App({
 
   globalData: {
     userInfo: null,
-    closeSettings: [], // 进程销毁时需保留的设置
+  },
+
+  initFavorite: function () {
+    let localFav = wx.getStorageSync('selectedSymbols')
+    if (localFav && localFav.length > 0) {
+      let params = []
+      for (let i in localFav) {
+        if (localFav[i]){
+          params.push(localFav[i].name + '--' + localFav[i].symbol) 
+        }
+      }
+
+      network.POST({
+        url: settings.initFavoriteListUrl,
+        params: {
+          favorite_list: params.join()
+        },
+        success: function () {
+          // wx.removeStorage({
+          //   key: 'selectedSymbols',
+          //   success: function(res) {},
+          // })
+        },
+      })
+
+    }
   },
 
   initData: function () {

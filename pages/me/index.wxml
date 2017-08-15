@@ -13,7 +13,7 @@
     </view>
 
     <view class="v-sep"></view>
-    <view class="cell">
+    <!-- <view class="cell">
       <view class="left-cell">币行情展示</view>
       <view class="right-cell"><view class="section">
           <picker class='picker-view' bindchange="setSymbolCnt" value="{{symbolCntIndex}}" range="{{symbolCnt}}">
@@ -38,7 +38,7 @@
           </picker>
         </view>
       </view>
-    </view>
+    </view> -->
     <view class="item-line"></view>
     <view class="cell">
       <view class="left-cell">红涨绿跌</view>
@@ -54,8 +54,8 @@
     </view>
     <view class="item-line"></view>
     <view class="cell"  bindtap="aboutUs">
-      <view class="left-cell">关于MyToken</view>
-      <view class="right-cell">v0.3.6
+      <view class="left-cell">关于 MyToken</view>
+      <view class="right-cell">v0.4.0
         <image class="detail" src="/images/icons/detail.png"></image>
       </view>
     </view>
@@ -63,9 +63,9 @@
     <view class="cell">
       <view class="left-cell">呼叫小月</view>
       <view class="right-cell">
-        <contact-button type="default-light" size="20" session-from="weapp">
-          <icon type="info" size="20"/>
-        </contact-button>
+        <button open-type="contact" id='service-btn' plain="true" session-from="weapp">
+          <image class="service-img" src="/images/buttons/xiaoyueyue_avatar.jpg"></image>
+        </button>
       </view>
     </view>
 

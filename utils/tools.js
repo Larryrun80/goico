@@ -4,10 +4,13 @@ function friendlyNumber(num) {
   return parts.join(".");
 }
 
-function number10k(num) {
+function friendlyNumberCn(num) {
   var parts = num.toString().split(".");
+  if (parseInt(parts[0]) >= 100000000) {
+    return (parts[0] / 100000000).toFixed(2) + '亿'
+  }
   if (parseInt(parts[0]) >= 10000) {
-    return (parts[0]/10000).toFixed(2) + '万'
+    return (parts[0] / 10000).toFixed(2) + '万'
   }
   return num;
 }
@@ -48,7 +51,7 @@ function swapItems (arr, index1, index2) {
 
 module.exports = {
   friendlyNumber: friendlyNumber,
-  number10k: number10k,
+  friendlyNumberCn: friendlyNumberCn,
   by: by,
   swapItems: swapItems,
 }

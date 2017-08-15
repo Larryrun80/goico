@@ -1,10 +1,10 @@
 <template name="coinItems">
-  <view class="coin-item" data-cid="{{cid}}" data-symbol="{{symbol}}" bindtap="redirectToDetail">
+  <view class="coin-item" data-currencyid="{{currencyId}}" data-marketid="{{marketId}}" data-symbol="{{symbol}}" data-market="{{marketShowName}}" bindtap="redirectToDetail">
     <view class="coin-info">
       <view class="item-left">
-        <view class="item-rank">#{{rank}}, {{showname}}</view>
+        <view class="item-rank">{{showName}}</view>
         <view class="item-name">{{symbol}}</view>
-        <view class="item-cap">${{marketcap}}</view>
+        <view class="item-cap">{{showVolume}}</view>
       </view>
       <view class="item-right">
         <view class="item-price">{{priceShow}}</view>

@@ -85,10 +85,10 @@
       </button>
     </view>
     <view class="ab-right">
-      <button wx:if="{{market=='cmc'}}" class="ab-btn" data-cid="{{cid}}" bindtap="selectSymbol" plain="true">
-        <image class="ab-img" wx:if="{{symbolSelected}}" src="/images/buttons/star.png"></image>
+      <button wx:if="{{market=='cmc'}}" class="ab-btn" data-cid="{{cid}}" bindtap="favorite" plain="true">
+        <image class="ab-img" wx:if="{{isFavorite}}" src="/images/buttons/star.png"></image>
         <image class="ab-img" wx:else src="/images/buttons/unstar.png"></image>
-        <view class="ab-label" wx:if="{{symbolSelected}}">已加自选</view>
+        <view class="ab-label" wx:if="{{isFavorite}}">已加自选</view>
         <view class="ab-label" wx:else>添加自选</view>
       </button>
       <button class="ab-btn" open-type="share" plain="true">

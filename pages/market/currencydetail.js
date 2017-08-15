@@ -1,8 +1,8 @@
 // pages/market/currencydetail.js
 var tools = require('../../utils/tools.js')
-var requests = require('../../utils/requests.js')
+var network = require('../../utils/network.js')
 var settings = require('../../secret/settings.js')
-var sc = require('../../utils/selectedCurrency.js')
+var fav = require('../../utils/favorite.js')
 var app = getApp()
 
 Page({
@@ -62,121 +62,104 @@ Page({
     })
   },
 
-  updateCurrency: function(cid, market='cmc') {
+  favorite: function () {
+    let that = this
+    if (this.data.isFavorite) { // 取消关注
+      fav.removeFavorite(this.data.currency_id, this.data.market_id, () => {
+        that.setData({
+          isFavorite: !that.data.isFavorite
+        })
+      })
+    }
+    else { // 添加关注
+      fav.addFavorite(this.data.currency_id, this.data.market_id, () => {
+        that.setData({
+          isFavorite: !that.data.isFavorite
+        })
+      })
+    }
+  },
+
+  loadCurrency: function(currency_id, market_id) {
     let that = this
     let fiat = wx.getStorageSync('defaultFiatIndex')
     let riseColor = wx.getStorageSync('riseColor')
     let trendIncreaseCss = 'item-trend-green'
     let trendDecreaseCss = 'item-trend-red'
+    let trendPeriod = '(24h)'
+
     if (riseColor && riseColor == 'red') {
       trendIncreaseCss = 'item-trend-red'
       trendDecreaseCss = 'item-trend-green'
     }
-    let url = settings.requestCurrencyUrl + '?currency_id=' + cid
-    let trendPeriod = '(24h)'
-    if (market != 'cmc') {
-      url = url + '&market=' + market
+    let url = settings.currencyDetailUrl + '?currency_id=' + currency_id
+    if (market_id != -1) {
+      url += '&market_id=' + market_id
+    } else {
       trendPeriod = '(今日)'
     }
 
-    requests.request(
-      url,
-      function (res) {
-        if (res.data.code == 0) {
-          console.log(res)
-          let priceCNY = '--'
-          if (res.data.data.market_cap.price_cny) {
-            priceCNY = res.data.data.market_cap.price_cny > 1 ? tools.friendlyNumber(res.data.data.market_cap.price_cny.toFixed(2)) : res.data.data.market_cap.price_cny
-          }
-          let priceUSD = res.data.data.market_cap.price_usd > 1 ? tools.friendlyNumber(res.data.data.market_cap.price_usd.toFixed(2)) : res.data.data.market_cap.price_usd
-          let priceShow = '¥' + priceCNY
-
-          if (fiat && fiat == 1 && market=='cmc') {
-            priceShow = '$' + priceUSD
-          }
-
-          let currency = res.data.data.name && res.data.data.symbol ? res.data.data.name + " (" + res.data.data.symbol + ")" : '--'
-          let showname = res.data.data.alias ? that.getPrefix(market) + res.data.data.alias + ', ' + currency : that.getPrefix(market) + currency
-          let markets = res.data.data.markets ? res.data.data.markets : []
-          let langUrls = {
-            CHN: '/images/flags/flag_china.png',
-            JPN: '/images/flags/flag_jpan.png',
-            KOR: '/images/flags/flag_korea.png',
-            ENG: '/images/flags/flag_usa.png', 
-          }
-
-          for (let i in markets) {
-            markets[i].language = markets[i].language ? markets[i].language : 'ENG'
-            markets[i].langUrl = langUrls[markets[i].language]
-            markets[i].volume = markets[i].volume_24h ? '$' + tools.friendlyNumber(markets[i].volume_24h) : '暂无数据'
-            markets[i].showname = markets[i].alias ? markets[i].alias + ', ' + markets[i].name : markets[i].name
-          }
-
-          that.setData({
-            cid: res.data.data.market_cap.currency_id,
-            symbol: res.data.data.market_cap.symbol,
-            name: res.data.data.name,
-            alias: res.data.data.alias,
-            showname: showname,
-            currency: currency,
-            priceCNY: priceCNY,
-            priceUSD: priceUSD,
-            priceShow: priceShow,
-            trends: res.data.data.market_cap.percent_change_display ? tools.friendlyNumber(res.data.data.market_cap.percent_change_display) : '0',
-            rank: res.data.data.market_cap.rank ? res.data.data.market_cap.rank : '--',
-            marketCap: res.data.data.market_cap.market_cap_usd ? tools.friendlyNumber(res.data.data.market_cap.market_cap_usd.toFixed(2)) : '--',
-            volume24h: res.data.data.market_cap.volume_usd_24h ? tools.friendlyNumber(res.data.data.market_cap.volume_usd_24h.toFixed(2)) : '--',
-            availableSupply: res.data.data.market_cap.available_supply ? tools.friendlyNumber(res.data.data.market_cap.available_supply) : '--',
-            links: {
-              'website': res.data.data.website ? res.data.data.website : '暂无',
-              'explorer': res.data.data.explorer ? res.data.data.explorer : '暂无',
-            } ,
-            markets: markets,
-            trendIncreaseCss: trendIncreaseCss,
-            trendDecreaseCss: trendDecreaseCss,
-            symbolSelected: that.isSelected(res.data.data.market_cap.currency_id, res.data.data.market_cap.symbol),
-            market: market,
-            trendPeriod: trendPeriod,
-          }) 
+    network.GET({
+      url: url,
+      success: function (res) {
+        let currency = res.data.data.name && res.data.data.symbol ? res.data.data.name + " (" + res.data.data.symbol + ")" : '--'
+        let showname = res.data.data.alias ? res.data.data.alias + ', ' + currency : currency
+        let marketShowName = res.data.data.market_alias ? res.data.data.market_alias : res.data.data.market_name
+        if (marketShowName != 'cmc') {
+          showname = marketShowName + ', ' + showname
         }
+        let markets = res.data.data.market_list ? res.data.data.market_list : []
+        let trends = market_id >= 0 ? res.data.data.percent_change_24h : percent_change_today
+        if (!trends) {trends = 0}
+        let langUrls = {
+          CHN: '/images/flags/flag_china.png',
+          JPN: '/images/flags/flag_jpan.png',
+          KOR: '/images/flags/flag_korea.png',
+          ENG: '/images/flags/flag_usa.png',
+        }
+
+        for (let i in markets) {
+          markets[i].language = markets[i].language ? markets[i].language : 'ENG'
+          markets[i].langUrl = langUrls[markets[i].language]
+          markets[i].volume = markets[i].volume_24h ? '$' + tools.friendlyNumber(markets[i].volume_24h) : '暂无数据'
+          markets[i].showname = markets[i].alias ? markets[i].alias + ', ' + markets[i].name : markets[i].name
+        }
+
+        that.setData({
+          currency_id: currency_id,
+          market_id: market_id,
+          market_name: res.data.data.market_name ? res.data.data.market_name : '',
+          symbol: res.data.data.symbol,
+          name: res.data.data.name,
+          alias: res.data.data.alias,
+          showname: showname,
+          marketShowName: marketShowName,
+          currency: currency,
+          priceShow: res.data.data.price_display,
+          trends: trends,
+          rank: res.data.data.rank ? res.data.data.rank : '--',
+          marketCap: res.data.data.market_cap_usd ? res.data.data.market_cap_usd : '--',
+          volume24h: res.data.data.volume_usd_24h ? res.data.data.volume_usd_24h : '--',
+          availableSupply: res.data.data.available_supply ? tools.friendlyNumber(res.data.data.available_supply) : '--',
+          links: {
+            'website': res.data.data.website ? res.data.data.website : '暂无',
+            'explorer': res.data.data.explorer ? res.data.data.explorer : '暂无',
+          },
+          markets: markets,
+          trendIncreaseCss: trendIncreaseCss,
+          trendDecreaseCss: trendDecreaseCss,
+          isFavorite: res.data.data.is_favorite ? res.data.data.is_favorite : false,
+          trendPeriod: trendPeriod,
+        })
       },
-      function (res) {
+      fail: function (res) {
         wx.showToast({
           title: '获取数据失败，请稍候再试...',
           duration: 1500,
           image: '/images/icons/exclamationmark.png'
         })
       }
-    )
-  },
-
-  selectSymbol: function () {
-    let status = this.data.symbolSelected
-    let cid = this.data.cid
-    let symbol = this.data.symbol
-    let name = this.data.name
-
-    if (status) {
-      sc.selectCurrency(cid, name, symbol, false)
-    }
-    else {
-      sc.selectCurrency(cid, name, symbol, true)
-    }
-
-    this.setData({
-      symbolSelected: !status
     })
-  },
-
-  isSelected: function (cid, symbol) {
-    return sc.isSelected(cid, symbol)
-  },
-
-  getPrefix: function (market='cmc') {
-    if (market == 'yunbi') {
-      return '云币, '
-    }
-    return ''
   },
 
   /**
@@ -185,11 +168,11 @@ Page({
   onLoad: function (options) {
     // console.log('options: ', options)
     let that = this
-    if (!options.symbol) { this.seeAll(); return }
-    this.updateCurrency(options.cid, options.market)
+    if (!options.currency_id) { this.seeAll(); return }
+    this.loadCurrency(options.currency_id, options.market_id)
 
     wx.setNavigationBarTitle({
-      title: that.getPrefix(options.market) + options.symbol
+      title: options.market ? options.market + ', ' + options.symbol : options.symbol
     })
 
     if (wx.showShareMenu) {
@@ -231,7 +214,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    this.updateCurrency(this.data.cid, this.data.market)
+    this.loadCurrency(this.data.currency_id, this.data.market_id)
     wx.hideNavigationBarLoading()
     wx.stopPullDownRefresh()
   },
@@ -253,7 +236,7 @@ Page({
     }
     return {
       title: this.getPrefix(this.data.market) + this.data.name,
-      path: '/pages/market/currencydetail?symbol=' + this.data.symbol + '&cid=' + this.data.cid + '&market=' + this.data.market,
+      path: '/pages/market/currencydetail?currency_id=' + this.data.currency_id + '&market_id=' + this.data.market_id + '&market=' + this.data.marketShowName,
       success: function (res) {
         // 转发成功
         // wxg.shareComplete(res)

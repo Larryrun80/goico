@@ -1,4 +1,3 @@
-var emoj = require('../../utils/emoj.js')
 var app = getApp()
 Page({
 
@@ -71,7 +70,8 @@ Page({
   underConstruction: function () {
     wx.showToast({
       title: '由于上线压力太大，此功能还未开发完成，请耐心等待',
-      duration: 1500
+      duration: 1500,
+      image: '/images/icons/exclamationmark.png',
     })
   },
 
@@ -130,11 +130,11 @@ Page({
 
   loadDefaultSettings: function () {
     let settings = {
-      fiatList: ['人民币', '美元'],
-      defaultFiatIndex: 0,
-      symbolCnt: ['Top 200', 'Top 500'],
-      symbolCntIndex: 0,
-      currencyListCnt: 200,
+      // fiatList: ['人民币', '美元'],
+      // defaultFiatIndex: 0,
+      // symbolCnt: ['Top 200', 'Top 500'],
+      // symbolCntIndex: 0,
+      // currencyListCnt: 200,
       riseColor: 'green',
     }
     let res = wx.getStorageInfoSync()

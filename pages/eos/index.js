@@ -1,7 +1,7 @@
 // pages/eos/index.js
 var tools = require('../../utils/tools.js')
 var wxCharts = require('../../utils/wxCharts.js')
-var requests = require('../../utils/requests.js')
+var network = require('../../utils/network.js')
 var settings = require('../../secret/settings.js')
 var app = getApp()
 var lineChart = null
@@ -33,28 +33,21 @@ Page({
 
   getEOSData: function () {
     let that = this
-    requests.request(
-      settings.requestEOSUrl,
-      function (res) {
-        if (res.data.code == 0) {
-          that.setData({
-            eosPrice: (res.data.data.eos_price && res.data.data.eos_price >= 0.00001) ? tools.friendlyNumber(res.data.data.eos_price.toFixed(5)) : '< 0.00001',
-            eosPriceCNY: res.data.data.eos_price_cny ? tools.friendlyNumber(res.data.data.eos_price_cny.toFixed(2)) : '-',
-            gatheredETH: res.data.data.eth_amount ? tools.friendlyNumber(res.data.data.eth_amount.toFixed(2)) : '--',
-            totalEOS: res.data.data.eos_amount ? tools.friendlyNumber(res.data.data.eos_amount.toFixed(0)) : '--',
-            gasPrice: res.data.data.gas_price ? tools.friendlyNumber(res.data.data.gas_price.toFixed(0)) : '--',
-            gasLimit: res.data.data.gas_limit ? tools.friendlyNumber(res.data.data.gas_limit.toFixed(0)) : '--',
-            historyPrice: (res.data.data.eos_price_total && res.data.data.eos_price_total >= 0.00001) ? tools.friendlyNumber(res.data.data.eos_price_total.toFixed(5)) : '< 0.00001',
-            historyPriceCNY: res.data.data.eos_price_total_cny ? tools.friendlyNumber(res.data.data.eos_price_total_cny.toFixed(2)) : '--',
-            historyEOS: res.data.data.eos_amount_total ? tools.friendlyNumber(res.data.data.eos_amount_total) : '--',
-            historyETH: res.data.data.eth_amount_total ? tools.friendlyNumber(res.data.data.eth_amount_total.toFixed(2)) : '--',
-            periodEndTime: res.data.data.period_end_time ? res.data.data.period_end_time : '--月--日--:00'
-          })
-      }
-      else {
-        wx.showToast({
-          title: res.data.message ? res.data.message : '获取EOS信息失败，请稍候再试',
-          duration: 2000
+    network.GET({
+      url: settings.requestEOSUrl,
+      success: function (res) {
+        that.setData({
+          eosPrice: (res.data.data.eos_price && res.data.data.eos_price >= 0.00001) ? tools.friendlyNumber(res.data.data.eos_price.toFixed(5)) : '< 0.00001',
+          eosPriceCNY: res.data.data.eos_price_cny ? tools.friendlyNumber(res.data.data.eos_price_cny.toFixed(2)) : '-',
+          gatheredETH: res.data.data.eth_amount ? tools.friendlyNumber(res.data.data.eth_amount.toFixed(2)) : '--',
+          totalEOS: res.data.data.eos_amount ? tools.friendlyNumber(res.data.data.eos_amount.toFixed(0)) : '--',
+          gasPrice: res.data.data.gas_price ? tools.friendlyNumber(res.data.data.gas_price.toFixed(0)) : '--',
+          gasLimit: res.data.data.gas_limit ? tools.friendlyNumber(res.data.data.gas_limit.toFixed(0)) : '--',
+          historyPrice: (res.data.data.eos_price_total && res.data.data.eos_price_total >= 0.00001) ? tools.friendlyNumber(res.data.data.eos_price_total.toFixed(5)) : '< 0.00001',
+          historyPriceCNY: res.data.data.eos_price_total_cny ? tools.friendlyNumber(res.data.data.eos_price_total_cny.toFixed(2)) : '--',
+          historyEOS: res.data.data.eos_amount_total ? tools.friendlyNumber(res.data.data.eos_amount_total) : '--',
+          historyETH: res.data.data.eth_amount_total ? tools.friendlyNumber(res.data.data.eth_amount_total.toFixed(2)) : '--',
+          periodEndTime: res.data.data.period_end_time ? res.data.data.period_end_time : '--月--日--:00'
         })
       }
     })
@@ -62,30 +55,32 @@ Page({
 
   getMarketCap: function () {
     let that = this
-    requests.request(
-      settings.requestMarketCapUrl,
-      function (res) {
-        if (res.data.code == 0 && res.data.data.asset == 'EOS') {
-        that.setData({
-          marketCap: res.data.data.market_cap ? tools.friendlyNumber(res.data.data.market_cap) : '--',
-          eosRank: res.data.data.rank ? res.data.data.rank : '--'    
-        })
+    network.GET({
+      url: settings.requestMarketCapUrl,
+      success: function (res) {
+        if (res.data.data.asset == 'EOS') {
+          that.setData({
+            marketCap: res.data.data.market_cap ? tools.friendlyNumber(res.data.data.market_cap) : '--',
+            eosRank: res.data.data.rank ? res.data.data.rank : '--'
+          })
+        }
+        else {
+          wx.showToast({
+            title: res.data.message ? res.data.message : '获取市值信息失败，请稍候再试',
+            duration: 2000,
+            image: '/images/icons/exclamationmark.png',
+          })
+        }
       }
-      else {
-        wx.showToast({
-          title: res.data.message ? res.data.message : '获取市值信息失败，请稍候再试',
-          duration: 2000
-        })
-      }
-    }
-  )},
+    })
+},
 
   getTrendData: function () {
     var that = this
-    requests.request(
-      settings.requestTrendUrl,
-      function (res) {
-        if (res.data.code == 0 && res.data.data.asset == 'EOS') {
+    network.GET({
+      url: settings.requestTrendUrl,
+      success: function (res) {
+        if (res.data.data.asset == 'EOS') {
           that.setData({
             trendData: (res.data.data.categories && res.data.data.values) ? {
               categories: res.data.data.categories,
@@ -100,11 +95,12 @@ Page({
         else {
           wx.showToast({
             title: res.data.message ? res.data.message : '获取EOS价格趋势数据失败，请稍候再试',
-            duration: 2000
+            duration: 2000,
+            image: '/images/icons/exclamationmark.png',
           })
         }
       }
-    )
+    })
   },
 
   updateData: function () {

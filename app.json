@@ -1,6 +1,5 @@
 {
   "pages":[
-    
     "pages/market/marketcap",
     "pages/market/currencydetail",
     "pages/market/search",
@@ -31,12 +30,6 @@
         "text": "币行情",
         "iconPath": "/images/tabs/trend_tab.png",
         "selectedIconPath": "/images/tabs/trend_tab_selected.png"
-      },
-      {
-        "pagePath": "pages/eos/index",
-        "text": "EOS知道",
-        "iconPath": "/images/tabs/eos_tab.png",
-        "selectedIconPath": "/images/tabs/eos_tab_selected.png"
       },
       {
         "pagePath": "pages/me/index",

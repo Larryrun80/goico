@@ -1,9 +1,10 @@
 /* pages/market/search.wxss */
-@import "../template/market-bar/market-bar.wxss";
+@import "../template/coin-items/coin-items.wxss";
+@import "../template/favorite-items/favorite-items.wxss";
 
 .container {
   display: flex;
-  flex-direction: column
+  flex-direction: column;
 }
 
 .filter {
@@ -22,7 +23,7 @@
   align-items: center;
   background-color: #fff;
   height: 56rpx;
-  margin-left: 16rpx;
+  margin-left: 15rpx;
   border-radius: 10rpx;
   width: 100%;
 }
@@ -71,4 +72,18 @@
 .item-line {
   height: 1rpx;
   background: #E5E5E5;
+}
+
+.noresult {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.noresult-lbl {
+  margin-top: 300rpx;
+  font-size: 32rpx;
+  color: #999;
+  margin-left: auto;
+  margin-right: auto;
 }

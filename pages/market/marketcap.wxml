@@ -1,28 +1,36 @@
 <!--pages/market/marketcap.wxml-->
 <import src="../template/coin-items/coin-items.wxml" />
-<import src="../template/market-data-items/market-data-items.wxml" />
 <form>
   <view class="toolkit">
     <view class="left-tool">
-      <view class="search-btn"  bindtap="onBindFocus">
-        <icon type="search" class="search-img" size="15" color="#405f80"></icon>
+      <view class="search-btn"  bindtap="goSearch">
+        <icon type="search" class="search-img" size="15" color="#999"></icon>
       </view>
       <view class='switch-line' wx:if="{{!searchPanelShow}}">
         <view bindtap="bindSelectedScope">
-          <label class="tool-label" style="color: {{selectedScopeColor}}">自选</label>
+          <label class="tool-label" style="color: {{btnStatus.selected}}">自选</label>
         </view>
         <view bindtap="sortByRank">
-          <label class="tool-label" style="color: {{rankSortColor}}">市值</label>
+          <label class="tool-label" style="color: {{btnStatus.rank}}">市值</label>
         </view>
-        <view class="rate-sort-container" bindtap="sortByRate">
-          <label class="tool-label" maxlength="20" style="color: {{rateSortColor}}">涨幅</label>
+        <view class="rate-sort-container" bindtap="sortByChange">
+          <label class="tool-label" maxlength="20" style="color: {{btnStatus.change}}">涨幅</label>
           <view class="sort-img-view">
-            <image wx:if="{{ sort != 'rate_asc' && sort != 'rate_desc' }}" id="sort-img" src="/images/icons/arrow_default.png"></image>
-            <image wx:else id="sort-img" src="/images/icons/arrow_{{sort}}.png"></image>
+            <image wx:if="{{ scope != 'change' }}" id="sort-img" src="/images/icons/arrow_default.png"></image>
+            <image wx:else id="sort-img" src="/images/icons/arrow_{{params.direction}}.png"></image>
           </view>
         </view>
-        <view bindtap="goYunbi">
-          <label class="tool-label" style="color: {{yunbiColor}}">假装在云币</label>
+
+        <picker class="picker" wx:if="{{marketPicker}}" bindchange="bindPickerChange" value="{{marketIndex}}" range="{{markets}}" range-key="showname">
+          <view class="tool-label" style="color: {{btnStatus.markets}}">
+            {{markets[marketIndex].showname}}
+            <image class="dropdown-img" wx:if="{{scope == 'markets' && markets.length > 1}}" src="/images/icons/chevron_down_small_black.png"></image>
+          </view>
+        </picker>
+
+        <view wx:else data-marketid="{{markets[marketIndex].market_id}}" bindtap="marketsClick">
+          <label class="tool-label" style="color: {{btnStatus.markets}}">{{markets[marketIndex].showname}} </label>
+          <image wx:if="{{markets.length > 1}}" class="dropdown-img" src="/images/icons/chevron_down_small_gray.png"></image>
         </view>
       </view>
 
@@ -41,12 +49,15 @@
     </view>
   </view>
 </form>
- <view class="cap-view"> 
+<view class="cap-view"> 
+<!-- <view class="notification">
+  <view class="notification-txt">大饼去哪啦？</view>
+</view> -->
 <!-- <scroll-view class="cap-view" scroll-y="true" scroll-top="{{scrollTop}}"   bindscroll="scroll"> -->
 <!-- <view class="placeholder-view"></view>  -->
-  <block wx:for="{{symbolsToShow}}" wx:for-item="symbol" wx:key="item">
-    <template wx:if="{{scope=='markets' && market!='cmc'}}" is="marketDataItems" data="{{...symbol}}"></template>
-    <template wx:else is="coinItems" data="{{...symbol}}"></template>
+  <block wx:for="{{currencyData}}" wx:for-item="currency" wx:key="item">
+    <!-- <template wx:if="{{scope=='markets'}}" is="marketDataItems" data="{{...currency}}"></template> -->
+    <template is="coinItems" data="{{...currency}}"></template>
   </block>
 
   <view wx:if="{{scope == 'selected'}}" bindtap="goAddSelected" class="add-select-btn">

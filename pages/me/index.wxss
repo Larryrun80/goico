@@ -94,3 +94,19 @@ page {
   height: 26rpx;
   margin-left: 20rpx;
 }
+
+#service-btn {
+  display: flex;
+  flex-direction: column;
+  width: 200rpx;
+  height: 100%;
+  align-items: flex-end;
+  border-width: 0;
+}
+
+.service-img {
+  width: 80rpx;
+  height: 80rpx;
+  margin-top: 10rpx;
+  border-radius: 50%;
+}

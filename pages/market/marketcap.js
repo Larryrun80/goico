@@ -1,8 +1,8 @@
 // pages/market/marketcap.js
 var tools = require('../../utils/tools.js')
-var requests = require('../../utils/requests.js')
+var network = require('../../utils/network.js')
 var settings = require('../../secret/settings.js')
-var sc = require('../../utils/selectedCurrency.js')
+var currencyHandler = require('../../utils/currency.js')
 var app = getApp()
 
 Page({
@@ -10,82 +10,30 @@ Page({
    * 页面的初始数据
    */
   data: {
-    // containerShow: true,
-    searchPanelShow: false,
-    keyword: '',
-    symbols: [],
-    symbolsToShow: [],
-    sort: "rank",
-    lastScope: "markets", // for cancel filter
-    scope: "markets",
+    scope: "rank",
     market: "cmc",
-    selectedScope: false, // 当前是否是自选
-    rateSortColor: "#999",
-    rankSortColor: "#000",
-    selectedScopeColor: "#999",
-    yunbiColor: "#999",
-    riseRed: false,
-    focus: false,
-    scrollTop: 0,
+    trendIncreaseCss: 'item-trend-green',
+    trendDecreaseCss: 'item-trend-red',
+    marketPicker: false,
+    marketIndex: 0,
   },
 
-  onBindFocus: function (e) {
+  bindPickerChange: function (e) {
+    let that = this
     this.setData({
-      // containerShow: false,
-      searchPanelShow: true,
-      focus: true,
+      marketIndex: e.detail.value
     })
-  },
-
-  onBindInput: function (event) {
-    let keyword = event.detail.value
-    this.setData({
-      keyword: keyword
-    })
-  },
-
-  search: function (event) {
-    if (!(this.data.scope == 'filter')) {
-      let that = this
-      this.setData({
-        lastScope: that.data.scope,
-        focus: false,
-      })
-    }
-
-    this.updateMarketcap('filter', this.data.sort)
-  },
-
-  onBindBlur: function (event) {
-    this.setData({
-      searchPanelShow: false,
-      focus: false,
-    })
-  },
-
-  onCancelImgTap: function (event) {
-    this.setData({
-      keyword: ''
-    })
-
-    let scope = this.data.lastScope ? this.data.lastScope : 'markets'
-    this.updateMarketcap(scope, this.data.sort)
+    this.bindData('markets', { market_id: this.data.markets[e.detail.value].market_id }, 1)
   },
 
   redirectToDetail: function (res) {
-    let cid = res.currentTarget.dataset.cid
+    let currency_id = res.currentTarget.dataset.currencyid
+    let market_id = res.currentTarget.dataset.marketid
     let symbol = res.currentTarget.dataset.symbol
-    wx.navigateTo({
-      url: 'currencydetail?symbol=' + symbol + '&cid=' +cid
-    })
-  },
+    let market = res.currentTarget.dataset.market
 
-  redirectToMarketDetail: function (res) {
-    let cid = res.currentTarget.dataset.cid
-    let symbol = res.currentTarget.dataset.symbol
-    let market = 'yunbi'
     wx.navigateTo({
-      url: 'currencydetail?symbol=' + symbol + '&cid=' + cid + '&market=' + market
+      url: 'currencydetail?currency_id=' + currency_id + '&market_id=' + market_id + '&symbol=' + symbol + '&market=' + market
     })
   },
 
@@ -105,321 +53,199 @@ Page({
     })
   },
 
-  // 根据scope 从远程服务器获取更新数据
-  updateMarketcap: function (scope, sort, market=this.data.market) {
+  goSearch: function () {
+    wx.navigateTo({
+      url: '/pages/market/search?type=list',
+    })
+  },
+
+  bindData: function (scope, params=null, page=1, size=20) {
+    const selectedColor = "#000"
+    const unselectedColor = "#999"
+
     let that = this
     let fiat = wx.getStorageSync('defaultFiatIndex')
 
-    // rise color
-    let riseColor = wx.getStorageSync('riseColor')
-    let trendIncreaseCss = 'item-trend-green'
-    let trendDecreaseCss = 'item-trend-red'
-    if (riseColor && riseColor == 'red') {
-      trendIncreaseCss = 'item-trend-red'
-      trendDecreaseCss = 'item-trend-green'
+    let btnStatus = {
+      rank: unselectedColor,
+      change: unselectedColor,
+      selected: unselectedColor,
+      markets: unselectedColor,
     }
+    btnStatus[scope] = selectedColor
 
-    // generate request url by scope
-    let url = settings.requestMarketListUrl
-    if (scope == 'selected') {
-      let selected_url = sc.getRemoteUrl()
-      if (selected_url !== url) {
-        url = selected_url
-      }
-      else {
-        this.flushData(scope, sort, market, [])
-        // this.setData({
-        //   scope: 'markets',
-        //   market: 'cmc',
-        // })
-        // wx.showModal({
-        //   title: '尚未添加自选行情',
-        //   content: '您可以在"我的"->"币行情自选"页面搜索添加',
-        //   confirmText: '现在添加',
-        //   confirmColor: '#2196F3',
-        //   cancelColor: '#888',
-        //   success: function (result) {
-        //     if (result.confirm) {
-        //       app.globalData.tmpParams = 'add_selected'
-        //       console.log(app.globalData)
-        //       wx.switchTab({
-        //         url: '/pages/me/index',
-        //       })
-        //     } else if (result.cancel) {
-        //       console.log('用户点击取消')
-        //     }
-        //   }
-        // })
+    let callbacks = {
+      success: function (res) {
+        let settings = that.data ? that.data : {}
+        settings.scope = scope
+        settings.params = params
+        settings.page = page
+        settings.size = size
+        settings.btnStatus = btnStatus
+        settings.marketPicker = (scope !== 'markets' || that.data.markets.length < 2) ? false : true
 
-        return
-      }
-    }
-
-    if (scope == 'markets') {
-      if (market == 'cmc') {
-        let symbolCnt = wx.getStorageSync('symbolCntIndex')
-        let url_param = 'limit=200'
-        if (symbolCnt && symbolCnt == 1) {
-          url_param = 'limit=500'
+        let currencyData = []
+        let originData = res.data.data.list
+        if (page > 1) {
+          currencyData = that.data.currencyData
         }
-        url = url + '?' + url_param
-      }
-      if (market == 'yunbi') {
-        url = settings.requestMarketDataUrl + '?' + 'market=yunbi'
-      }
-    }
 
-    if (scope == 'filter') {
-      url = url + '?symbol=' + this.data.keyword.trim()
-    }
+        for (let i in originData) {
+          if (!(originData[i].symbol.toUpperCase().indexOf('BTC') >= 0)) {
+            let percentChange = originData[i].percent_change_display ? parseFloat(originData[i].percent_change_display) : 0
 
-    // start request
-    requests.request(
-      url,
-      function (res) {
-        if (res.data.code == 0) {
-          // console.log(res)
-          let mcList = []
-          let mcListRaw = res.data.data.list
-          for (let i in mcListRaw) {
-            let priceCNY = null
-            let priceUSD = null
-            let priceShow = null
-            if (mcListRaw[i].price_cny) {
-              priceCNY = mcListRaw[i].price_cny >= 1 ? tools.friendlyNumber(mcListRaw[i].price_cny.toFixed(2)) : mcListRaw[i].price_cny
+            let marketShowName = originData[i].market_name ? originData[i].market_name : '--'
+            if (originData[i].market_alias) {
+              marketShowName = originData[i].market_alias
             }
-            if (mcListRaw[i].price_usd) {
-              priceUSD = mcListRaw[i].price_usd >= 1 ? tools.friendlyNumber(mcListRaw[i].price_usd.toFixed(2)) : mcListRaw[i].price_usd
-            }
-            if (priceCNY !== null && !(fiat && fiat == 1 && priceUSD)) {
-              priceShow = '¥' + priceCNY
-            }else {
-              priceShow = '$' + priceUSD
+            if (marketShowName == 'cmc') {
+              marketShowName = ''
             }
 
-            let percentChange = 0
-            if (mcListRaw[i].percent_change_display) {
-              percentChange = parseFloat(mcListRaw[i].percent_change_display)
+            let showName = originData[i].alias ? originData[i].alias : originData[i].name
+            let showVolume_prefix = '交易量(24h): '
+            let showVolume = originData[i].volume_24h ? tools.friendlyNumberCn(originData[i].volume_24h) : '暂无数据'
+            showVolume = showVolume_prefix + showVolume
+            if (! marketShowName) {
+              let showNamePrefix = scope == 'selected' ? '综合' : '#' + originData[i].rank
+              showName = showNamePrefix + ', ' + showName
+              let cap = originData[i].market_cap_usd ? tools.friendlyNumber(originData[i].market_cap_usd) : null
+              if (cap) {
+                showVolume = '市值: $' + tools.friendlyNumberCn(cap)
+              } else {
+                showVolume = '市值: 暂无数据'
+              }
+            } else {
+              showName = marketShowName + ', ' + showName
             }
-            else if (mcListRaw[i].percent_change_24h) {
-              percentChange = parseFloat(mcListRaw[i].percent_change_24h)
-            }
-
-            // console.log(mcList)
-            mcList.push({
-              cid: mcListRaw[i].currency_id,
-              name: mcListRaw[i].name,
-              symbol: mcListRaw[i].symbol,
-              alias: mcListRaw[i].alias,
-              showname: mcListRaw[i].alias ? mcListRaw[i].alias : mcListRaw[i].name,
-              rank: mcListRaw[i].rank ? mcListRaw[i].rank : '--',
-              priceShow: priceShow,
-              priceCNY: priceCNY,
-              priceUSD: priceUSD,
-              marketcap: mcListRaw[i].market_cap_usd ? tools.friendlyNumber(mcListRaw[i].market_cap_usd) : '--',
-              volume_24h: mcListRaw[i].volume_24h ? tools.number10k(mcListRaw[i].volume_24h) : '暂无数据',
+            currencyData.push({
+              currencyId: originData[i].currency_id,
+              name: originData[i].name,
+              symbol: originData[i].symbol,
+              alias: originData[i].alias,
+              showName: showName,
+              showVolume: showVolume,
+              rank: originData[i].rank ? originData[i].rank : '--',
+              priceShow: originData[i].price_display,
               percentChange: percentChange,
-              trendIncreaseCss: trendIncreaseCss,
-              trendDecreaseCss: trendDecreaseCss,
+              marketId: originData[i].market_id ? originData[i].market_id : -1,
+              marketShowName: marketShowName,
+              trendIncreaseCss: that.data.trendIncreaseCss,
+              trendDecreaseCss: that.data.trendDecreaseCss,
             })
           }
-          that.flushData(scope, sort, market, mcList)
         }
+
+        settings.currencyData = currencyData
+        // console.log('writing settings: ', settings)
+        that.setData(
+          settings
+        )
       },
-      function (res) {
-        wx.showToast({
-          title: '获取数据失败，请稍候再试...',
-          duration: 1500,
-          image: '/images/icons/exclamationmark.png'
-        })
-      }
-    )
+    }
+
+    currencyHandler.loadCurrency(scope, params, page, size, callbacks)
   },
 
-  // sort 排序模式： rank, rate_asc, rate_desc
-  // originData, 如果不传入值则取本地symbols数据, 这个值也会被setData为symbols
-  flushData: function (scope = 'markets', sort='rank', market='cmc', originData=this.data.symbols) {
-    let settings = this.data
-
-    const selectedColor = "#000"
-    const unselectedColor = "#999"
-    if (!sort in ['rank', "rate_asc", "rate_desc"]) {
-      return null
-    }
-  
-    if (!scope in ["markets", "selected", "filter"]) {
-      return null
+  sortByChange: function () {
+    let direction = 'desc'
+    if (this.data.params && this.data.params.direction) {
+      direction = this.data.params.direction == 'desc' ? 'asc' : 'desc'
     }
 
-    // get filtered result
-    settings.scope = scope
-    settings.market = market
-    settings.keyword = this.data.keyword
-    // let symbolsToShow = originData
-    // let symbolsToShow = this.getSymbolsToShow(settings.keyword, originData)
-    if (scope == 'markets') {
-      if (market == 'cmc') {
-        // sort
-        if (sort === 'rank') {
-          settings.rateSortColor = unselectedColor
-          settings.rankSortColor = selectedColor
-          settings.selectedScopeColor = unselectedColor
-          settings.yunbiColor = unselectedColor
-          settings.sort = 'rank'
-          originData = originData.sort(tools.by("rank"))
-        }
-        if (sort == "rate_asc") {
-          settings.rateSortColor = selectedColor
-          settings.rankSortColor = unselectedColor
-          settings.selectedScopeColor = unselectedColor
-          settings.yunbiColor = unselectedColor
-          settings.sort = 'rate_asc'
-          originData = originData.sort(tools.by("percentChange", "asc"))
-        }
-        if (sort == "rate_desc") {
-          settings.rateSortColor = selectedColor
-          settings.rankSortColor = unselectedColor
-          settings.selectedScopeColor = unselectedColor
-          settings.yunbiColor = unselectedColor
-          settings.sort = 'rate_desc'
-          originData = originData.sort(tools.by("percentChange", "desc"))
-        }
-      }
-      else if (market == 'yunbi') {
-        settings.rateSortColor = unselectedColor
-        settings.rankSortColor = unselectedColor
-        settings.selectedScopeColor = unselectedColor
-        settings.yunbiColor = selectedColor
-        settings.sort = 'no_sort'
-      }
-      settings.searchPanelShow = false
-      settings.focus = false
-    }
-
-    if (scope == 'selected') {  // if selected Symbols
-      let symbolsTemp = originData
-      originData = []
-      let [selected, ] = sc.loadSelectedData()
-      for (let i in selected) {
-        for (let j in symbolsTemp) {
-          if ((selected[i].currency_id && selected[i].currency_id == symbolsTemp[j].cid) ||
-            (selected[i].name == symbolsTemp[j].name && selected[i].symbol == symbolsTemp[j].symbol)) {
-            originData.push(symbolsTemp[j])
-          }
-        }
-      }
-
-      settings.sort = ''
-      settings.rateSortColor = unselectedColor
-      settings.rankSortColor = unselectedColor
-      settings.selectedScopeColor = selectedColor
-      settings.yunbiColor = unselectedColor
-      settings.searchPanelShow = false
-      settings.focus = false
-    }
- 
-    settings.symbols = originData
-    settings.symbolsToShow = originData
-    settings.searchPanelShow = settings.keyword ? settings.searchPanelShow : false
-    this.setData(
-      settings
-    )
-
-    // wx.setStorage({
-    //   key: 'coinListParams',
-    //   data: {
-    //     scope: scope,
-    //     market: market,
-    //     sort: settings.sort,
-    //   },
-    // })
-    // console.log(settings)
-  },
-
-  sortByRate: function () {
-    let sort = this.data.sort == "rate_desc" ? "rate_asc" : "rate_desc"
-    if (!(this.data.scope == 'markets' && this.data.market == 'cmc')) {
-      this.updateMarketcap('markets', sort, 'cmc')
-    } else {
-      this.flushData('markets', sort, 'cmc')
-    }
+    this.bindData('change', {direction: direction}, 1)
   },
 
   sortByRank: function () {
-    if (!(this.data.scope == 'markets' && this.data.market == 'cmc')) {
-      this.updateMarketcap('markets', "rank", 'cmc')
-    }
-    else if (!(this.data.sort == 'rank')) {
-      this.flushData('markets', "rank", 'cmc')
+    if (!(this.data.scope == 'rank')) {
+      this.bindData('rank', null, 1)
     }
   },
 
-  goYunbi: function () {
-    if (!(this.data.scope == 'markets' && this.data.market == 'yunbi')) {
-      this.updateMarketcap('markets', 'no_sort', 'yunbi')
+  marketsClick: function (e) {
+    if (!(this.data.scope == 'markets')) {
+      this.bindData('markets', { market_id: e.currentTarget.dataset.marketid}, 1)
     }
   },
 
   bindSelectedScope: function () {
     if (!(this.data.scope == 'selected')) {
-      this.updateMarketcap('selected', this.data.sort)
+      this.bindData('selected')
     }
+  },
+
+  getAvailableMarkets: function () {
+    let that = this
+    currencyHandler.getAvailableMarkets({
+      success: function (res) {
+        let markets = []
+        for (let m in res.data.data.list) {
+          markets.push({
+            market_id: res.data.data.list[m].market_id,
+            name: res.data.data.list[m].name,
+            alias: res.data.data.list[m].alias,
+            showname: res.data.data.list[m].alias ? res.data.data.list[m].alias : res.data.data.list[m].name,
+            weight: res.data.data.list[m].weight,
+          })
+        }
+
+        app.globalData.markets = markets
+        that.setData({
+          markets: markets
+        })
+
+        wx.setStorage({
+          key: 'availableMarkets',
+          data: markets,
+        })
+
+      },
+      fail: () => {
+        wx.showToast({
+          title: '获取市场数据失败',
+          image: '/images/icons/exclamationmark.png',
+        })
+      },
+      complete: () => { },
+    })
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    let keyword = ''
-    let sort = 'rank'
-    let scope = 'markets'
-    let market = 'cmc'
+    let validScope = ['rank', 'change', 'selected', 'markets']
+    let scope = 'selected'
+    let page = 1
+    let params = {}
 
+    let markets = wx.getStorageSync('availableMarkets') ? wx.getStorageSync('availableMarkets') : [] 
+    console.log('options: ', options)
     // 如果来自分享页面
-    if (options.sort) {
-      sort = options.sort
+    if (options.scope && (validScope.indexOf(options.scope) >= 0)) {
+      scope = options.scope
     }
 
-    if (options.market) {
-      market = options.market
-    }
-
-    if (options.keyword) {
-      keyword = options.keyword
-      scope = 'filter'
-    }
-
-    if (!options.keyword && !options.sort && !options.markets) {  // 如果本地打开
-      // let storageData = wx.getStorageSync('coinListParams')
-      // if (storageData.scope) {
-      //   scope = storageData.scope
-      // }
-      // if (storageData.sort) {
-      //   sort = storageData.sort
-      // }
-      // if (storageData.market) {
-      //   market = storageData.market
-      // }
-      let currencies = sc.loadSelectedData()[0]
-      if (currencies.length > 0) { // 如果有自选
-        scope = 'selected'
+    if (options.param) {
+      if (scope == 'change') {
+        params.direction = options.param
+      }
+      if (scope == 'markets') {
+        params.market_id = options.param
       }
     }
 
-    // this.updateMarketcap('top', keyword, sort)
-    // let selectedScope = (scope == 'selected') ? true : false
-    let searchPanelShow = (keyword == '') ? false : true
-    console.log(keyword, sort, scope, searchPanelShow)
     this.setData({
-      keyword: keyword,
-      sort: sort,
       scope: scope,
-      market: market,
-      searchPanelShow: searchPanelShow,
-      focus: false,
+      page: page,
+      markets: markets,
+      params: params,
     })
-  
 
+    this.getAvailableMarkets()
+
+    this.bindData(scope, params)
+  
     if (wx.showShareMenu) {
       wx.showShareMenu({
         withShareTicket: true
@@ -438,7 +264,22 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    this.updateMarketcap(this.data.scope, this.data.sort)
+    let riseColor = wx.getStorageSync('riseColor') ? wx.getStorageSync('riseColor') : 'green'
+    let trendIncreaseCss = 'item-trend-green'
+    let trendDecreaseCss = 'item-trend-red'
+
+    if (riseColor != 'green') {
+      [trendIncreaseCss, trendDecreaseCss] = [trendDecreaseCss, trendIncreaseCss]
+    }
+
+    this.setData({
+      trendIncreaseCss: trendIncreaseCss,
+      trendDecreaseCss: trendDecreaseCss,
+    })
+
+    if (this.data.scope == 'selected') {
+      this.bindData(this.data.scope, this.data.params)
+    }
   },
 
   /**
@@ -467,7 +308,10 @@ Page({
    */
   onPullDownRefresh: function () {
     // let scope = this.getCurrentScope()
-    this.updateMarketcap(this.data.scope, this.data.sort)
+    // this.updateMarketcap(this.data.scope, this.data.sort)
+    // wx.stopPullDownRefresh()
+
+    this.bindData(this.data.scope, this.data.params, 1)
     wx.stopPullDownRefresh()
   },
 
@@ -475,7 +319,10 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-  
+    if (this.data.scope != 'selected') {
+      let page = parseInt(this.data.page) + 1
+      this.bindData(this.data.scope, this.data.params, page)
+    }
   },
 
   /**
@@ -486,9 +333,18 @@ Page({
       // 来自页面内转发按钮
       console.log(res.target)
     }
+    let param = ''
+    if (this.data.scope == 'change') {
+      param = this.data.params.direction
+    }
+    if (this.data.scope == 'markets') {
+      param = this.data.params.market_id
+    }
+
+    console.log('param', param)
     return {
       title: '币行情',
-      path: '/pages/market/marketcap?keyword=' + this.data.keyword + '&sort=' + this.data.sort + '&market=' + this.data.market,
+      path: '/pages/market/marketcap?scope=' + this.data.scope + '&param=' + param,
       success: function (res) {
         // 转发成功
         // wxg.shareComplete(res)
