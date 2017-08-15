@@ -61,7 +61,7 @@
   </block>
 
   <view wx:if="{{scope == 'selected'}}" bindtap="goAddSelected" class="add-select-btn">
-    <view>添加自选行情</view>
+    <view>添加, 编辑自选行情</view>
      <image class="detail" src="/images/icons/detail_small.png"></image> 
      <view class="add-selected-bottom"></view>
   </view>
