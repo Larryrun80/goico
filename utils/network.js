@@ -1,5 +1,4 @@
 var secret = require('../secret/settings.js')
-var app = getApp()
 
 let requestHandler = {
   url: '',
@@ -49,6 +48,7 @@ function generateUrl(url) {
 }
 
 function loginAndRerun(method, requestHandler, retry) {
+  let app = getApp()
   if (app.globalData.userInfo) {
     getCookie(method, requestHandler, app.globalData.userInfo.nickName, app.globalData.userInfo.avatarUrl, retry)
   }else {
