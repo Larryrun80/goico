@@ -13,7 +13,7 @@ Page({
     changed: false,
   },
 
-  loadData: function (loadType='normal') { // 重新加在本地数据
+  loadData: function () { // 重新加在本地数据
     let that = this
     network.GET({
       url: settings.favoriteListUrl,
@@ -21,33 +21,36 @@ Page({
         let favlist = []
         for (let i in res.data.data.list) {
           let fav = res.data.data.list[i]
-          let marketShowName = ''
-          if (fav.market_name != 'cmc') {
-            marketShowName = fav.market_alias ? fav.market_alias : fav.market_name 
-          }
-          else {
-            marketShowName = '综合'
-          }
-          
-          let showName = fav.alias ? fav.alias : fav.name
-          if (marketShowName) {
-            showName = marketShowName + ', ' + showName
-          }
 
-          let currency = {
-            currencyId: fav.currency_id,
-            currencyName: fav.currency_name,
-            currencyAlias: fav.currency_alias,
-            marketId: fav.market_id,
-            marketName: fav.market_name,
-            marketAlias: fav.market_alias,
-            symbol: fav.symbol,
-            seq: i,
-            showName: showName,
-            isFavorite: true,
-          }
+          if (fav.symbol.toUpperCase().indexOf('BTC') < 0) {
+            let marketShowName = ''
+            if (fav.market_name != 'cmc') {
+              marketShowName = fav.market_alias ? fav.market_alias : fav.market_name 
+            }
+            else {
+              marketShowName = '综合'
+            }
+            
+            let showName = fav.alias ? fav.alias : fav.name
+            if (marketShowName) {
+              showName = marketShowName + ', ' + showName
+            }
 
-          favlist.push(currency)
+            let currency = {
+              currencyId: fav.currency_id,
+              currencyName: fav.currency_name,
+              currencyAlias: fav.currency_alias,
+              marketId: fav.market_id,
+              marketName: fav.market_name,
+              marketAlias: fav.market_alias,
+              symbol: fav.symbol,
+              seq: i,
+              showName: showName,
+              isFavorite: true,
+            }
+
+            favlist.push(currency)
+          }
         }
 
         that.setData({
@@ -137,12 +140,6 @@ Page({
    */
   onShow: function () {
     this.loadData()
-    // 如果在搜索状态，加载远程数据，否则加载本地
-    // if (this.data.searchPanelShow) {
-    //   this.filterData(this.data.keyword)
-    // }else {
-    //   this.loadData()
-    // }
   },
 
   /**

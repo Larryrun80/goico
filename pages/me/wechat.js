@@ -21,10 +21,7 @@ Page({
           wx.setClipboardData({
             data: info,
             success: function (res) {
-              // wx.showToast({
-              //   title: '已复制到您的黏贴板',
-              //   duration: 1500
-              // })
+              
             }
           })
         } else if (res.cancel) {

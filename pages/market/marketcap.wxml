@@ -50,13 +50,7 @@
   </view>
 </form>
 <view class="cap-view"> 
-<!-- <view class="notification">
-  <view class="notification-txt">大饼去哪啦？</view>
-</view> -->
-<!-- <scroll-view class="cap-view" scroll-y="true" scroll-top="{{scrollTop}}"   bindscroll="scroll"> -->
-<!-- <view class="placeholder-view"></view>  -->
   <block wx:for="{{currencyData}}" wx:for-item="currency" wx:key="item">
-    <!-- <template wx:if="{{scope=='markets'}}" is="marketDataItems" data="{{...currency}}"></template> -->
     <template is="coinItems" data="{{...currency}}"></template>
   </block>
 

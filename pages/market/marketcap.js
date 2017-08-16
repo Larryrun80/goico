@@ -292,25 +292,13 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-    // let data = {
-    //   scope: this.data.scope,
-    //   sort: this.data.sort,
-    // }
 
-    // wx.setStorage({
-    //   key: 'coinListParams',
-    //   data: data,
-    // })
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    // let scope = this.getCurrentScope()
-    // this.updateMarketcap(this.data.scope, this.data.sort)
-    // wx.stopPullDownRefresh()
-
     this.bindData(this.data.scope, this.data.params, 1)
     wx.stopPullDownRefresh()
   },

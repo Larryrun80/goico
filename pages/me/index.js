@@ -140,7 +140,6 @@ Page({
     let res = wx.getStorageInfoSync()
 
     for (let item in settings) {
-      // if ((res.keys.includes(item))) {
       if (res.keys.indexOf(item) > -1) {
         console.log('load value from storage ', item)
         settings[item] = wx.getStorageSync(item)
@@ -197,18 +196,6 @@ Page({
     this.getMessage()
     let settings = this.loadDefaultSettings()
     this.setData(settings)
-
-    // if (app.globalData.tmpParams && app.globalData.tmpParams == 'add_selected') {
-    //   app.globalData.tmpParams = ''
-    //   setTimeout(
-    //     function () {
-    //       wx.navigateTo({
-    //         url: '/pages/me/selected',
-    //       })
-    //     },
-    //     500
-    //   )
-    // }
   },
 
   /**

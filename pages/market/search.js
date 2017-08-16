@@ -163,6 +163,10 @@ Page({
       placeholderText = '输入币名添加自选'
     }
 
+    wx.setNavigationBarTitle({
+      title: dataType == 'favorite' ? '自选搜索' : '币行情搜索'
+    })
+
     setTimeout(()=>{
       this.setData({
         dataType: dataType,

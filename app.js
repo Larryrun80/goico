@@ -54,10 +54,10 @@ App({
           favorite_list: params.join()
         },
         success: function () {
-          // wx.removeStorage({
-          //   key: 'selectedSymbols',
-          //   success: function(res) {},
-          // })
+          wx.removeStorage({
+            key: 'selectedSymbols',
+            success: function(res) {},
+          })
         },
       })
 
@@ -71,13 +71,13 @@ App({
         console.log('全部空间: ', res.limitSize)
 
         let initData = {
-          fiatList: ['人民币', '美元'],
-          defaultFiatIndex: 0,
-          symbolCnt: ['Top 200', 'Top 500'],
-          symbolCntIndex: 0,
-          currencyListCnt: 200,
+          // fiatList: ['人民币', '美元'],
+          // defaultFiatIndex: 0,
+          // symbolCnt: ['Top 200', 'Top 500'],
+          // symbolCntIndex: 0,
+          // currencyListCnt: 200,
           riseColor: 'green',
-          selectedSymbols: [],
+          // selectedSymbols: [],
         }
 
         for (let item in initData) {

@@ -1,10 +1,5 @@
 <!--pages/me/selected.wxml-->
 <view class="container">
-
-  <!-- <view class="filter" bindtap="goSearch">
-    <icon type="search" class="search-img" size="15" color="#405f80"></icon>
-    <view class="search-view">输入币名添加自选</view>
-  </view>  -->
   <view class="filter" bindtap="goSearch">
     <view class="filter-set">
       <icon type="search" class="search-img" size="15" color="#999"></icon>
