@@ -94,11 +94,11 @@ Page({
           if (!(originData[i].symbol.toUpperCase().indexOf('BTC') >= 0)) {
             let percentChange = originData[i].percent_change_display ? parseFloat(originData[i].percent_change_display) : 0
 
-            let marketShowName = originData[i].market_name ? originData[i].market_name : '--'
+            let marketShowName = originData[i].market_name ? originData[i].market_name : ''
             if (originData[i].market_alias) {
               marketShowName = originData[i].market_alias
             }
-            if (marketShowName == 'cmc') {
+            if (marketShowName == '综合') {
               marketShowName = ''
             }
 
@@ -106,6 +106,7 @@ Page({
             let showVolume_prefix = '交易量(24h): '
             let showVolume = originData[i].volume_24h ? tools.friendlyNumberCn(originData[i].volume_24h) : '暂无数据'
             showVolume = showVolume_prefix + showVolume
+
             if (! marketShowName) {
               let showNamePrefix = scope == 'selected' ? '综合' : '#' + originData[i].rank
               showName = showNamePrefix + ', ' + showName

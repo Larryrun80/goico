@@ -1,9 +1,0 @@
-/* pages/test/test.wxss */
-.canvas {
-  height: 200px;
-  width: 100%;
-}
-
-.update-btn {
-  margin-top: 20px;
-}

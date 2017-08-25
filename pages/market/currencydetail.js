@@ -95,8 +95,6 @@ Page({
     let url = settings.currencyDetailUrl + '?currency_id=' + currency_id
     if (market_id != -1) {
       url += '&market_id=' + market_id
-    } else {
-      trendPeriod = '(今日)'
     }
 
     network.GET({
@@ -105,12 +103,12 @@ Page({
         let currency = res.data.data.name && res.data.data.symbol ? res.data.data.name + " (" + res.data.data.symbol + ")" : '--'
         let showname = res.data.data.alias ? res.data.data.alias + ', ' + currency : currency
         let marketShowName = res.data.data.market_alias ? res.data.data.market_alias : res.data.data.market_name
-        if (marketShowName != 'cmc') {
+        if (marketShowName != 'cmc' && marketShowName != '综合' && marketShowName != '') {
           showname = marketShowName + ', ' + showname
+          trendPeriod = '(今日)'
         }
         let markets = res.data.data.market_list ? res.data.data.market_list : []
-        let trends = market_id >= 0 ? res.data.data.percent_change_24h : percent_change_today
-        if (!trends) {trends = 0}
+        let trends = res.data.data.percent_change_display ? res.data.data.percent_change_display : 0
         let langUrls = {
           CHN: '/images/flags/flag_china.png',
           JPN: '/images/flags/flag_jpan.png',

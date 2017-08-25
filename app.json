@@ -9,9 +9,7 @@
     "pages/me/index",
     "pages/me/wechat",
     "pages/me/about",
-    "pages/me/selected",
-
-    "pages/logs/logs"
+    "pages/me/selected"
   ],
   "window":{
 
